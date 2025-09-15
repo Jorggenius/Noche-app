@@ -14,8 +14,13 @@ import java.math.BigDecimal;
 public class EvaluacionUpdateDTO {
 
     @Schema(description = "Nuevo título de la evaluación",
-            example = "Examen Intermedio de Java", maxLength = 150)
+            example = "Examen Intermedio de Java",
+            maxLength = 150)
     private String titulo;
+
+    @Schema(description = "Nueva descripción de la evaluación",
+            example = "Evaluación práctica con ejercicios de código")
+    private String descripcion;
 
     @Schema(description = "Nuevo tipo de evaluación",
             example = "Abierta",
@@ -23,6 +28,7 @@ public class EvaluacionUpdateDTO {
     private String tipo;
 
     @Schema(description = "Nuevo puntaje máximo de la evaluación",
-            example = "50.00", minimum = "0.01")
+            example = "50.00",
+            minimum = "0.01")
     private BigDecimal puntajeMax;
 }

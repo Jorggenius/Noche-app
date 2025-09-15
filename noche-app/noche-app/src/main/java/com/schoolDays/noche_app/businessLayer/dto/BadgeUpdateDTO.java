@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class BadgeUpdateDTO {
 
     @Schema(description = "Nuevo nombre del badge",
-            example = "Super Learner", maxLength = 100)
+            example = "Super Learner",
+            maxLength = 100)
     private String nombre;
 
     @Schema(description = "Nuevo criterio para otorgar el badge",

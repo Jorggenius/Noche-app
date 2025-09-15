@@ -14,13 +14,19 @@ import java.math.BigDecimal;
 public class EvaluacionCreateDTO {
 
     @Schema(description = "ID del módulo al que pertenece la evaluación",
-            example = "7", required = true)
-    private Long moduloId;
+            example = "7",
+            required = true)
+    private Integer moduloId;
 
     @Schema(description = "Título de la evaluación",
             example = "Examen Final de Java",
-            required = true, maxLength = 150)
+            required = true,
+            maxLength = 150)
     private String titulo;
+
+    @Schema(description = "Descripción de la evaluación",
+            example = "Evaluación con preguntas teóricas y prácticas")
+    private String descripcion;
 
     @Schema(description = "Tipo de evaluación",
             example = "MCQ",
@@ -29,6 +35,8 @@ public class EvaluacionCreateDTO {
     private String tipo;
 
     @Schema(description = "Puntaje máximo posible en la evaluación",
-            example = "100.00", required = true, minimum = "0.01")
+            example = "100.00",
+            required = true,
+            minimum = "0.01")
     private BigDecimal puntajeMax;
 }

@@ -8,16 +8,16 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Datos para crear una nueva inscripción")
-public class InscripcionCreateDTO {
+@Schema(description = "Datos para otorgar un badge a un usuario")
+public class UsuarioBadgeCreateDTO {
 
-    @Schema(description = "ID del usuario que se inscribe",
+    @Schema(description = "ID del usuario al que se otorga el badge",
             example = "12",
             required = true)
     private Integer usuarioId;
 
-    @Schema(description = "ID del curso al que se inscribe",
-            example = "5",
+    @Schema(description = "ID del badge que se otorga",
+            example = "3",
             required = true)
-    private Integer cursoId;
+    private Integer badgeId;
 }

@@ -18,6 +18,7 @@ public class CertificadoUpdateDTO {
     private LocalDate fechaEmision;
 
     @Schema(description = "Nuevo código único de verificación del certificado",
-            example = "xyz789abc456", maxLength = 255)
+            example = "xyz789abc456",
+            maxLength = 255)
     private String hash;
 }

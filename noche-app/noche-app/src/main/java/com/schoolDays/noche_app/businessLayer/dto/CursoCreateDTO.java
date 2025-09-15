@@ -13,19 +13,28 @@ public class CursoCreateDTO {
 
     @Schema(description = "Título del curso",
             example = "Introducción a Spring Boot",
-            required = true, maxLength = 150)
+            required = true,
+            maxLength = 150)
     private String titulo;
 
     @Schema(description = "Descripción detallada del curso",
             example = "Curso introductorio sobre el framework Spring Boot y sus principales características")
     private String descripcion;
 
-    @Schema(description = "Duración estimada del curso en horas",
-            example = "40", required = true)
-    private Integer duracionEstim;
-
     @Schema(description = "Nivel de dificultad del curso",
-            example = "Básico", required = true,
+            example = "Básico",
+            required = true,
             allowableValues = {"Básico", "Intermedio", "Avanzado"})
     private String nivel;
+
+    @Schema(description = "Duración estimada del curso en horas",
+            example = "40",
+            required = true,
+            minimum = "1")
+    private Integer duracionEstimada;
+
+    @Schema(description = "ID del usuario que crea el curso",
+            example = "1",
+            required = true)
+    private Integer creadoPorId;
 }

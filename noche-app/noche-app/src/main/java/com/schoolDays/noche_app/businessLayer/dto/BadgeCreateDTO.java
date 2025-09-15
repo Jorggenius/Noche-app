@@ -13,7 +13,8 @@ public class BadgeCreateDTO {
 
     @Schema(description = "Nombre del badge",
             example = "Top Performer",
-            required = true, maxLength = 100)
+            required = true,
+            maxLength = 100)
     private String nombre;
 
     @Schema(description = "Criterio o condición para otorgar el badge",

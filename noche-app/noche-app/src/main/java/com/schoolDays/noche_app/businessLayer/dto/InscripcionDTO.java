@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,21 +17,26 @@ import java.time.LocalDate;
 public class InscripcionDTO {
 
     @Schema(description = "ID único de la inscripción",
-            example = "101", accessMode = Schema.AccessMode.READ_ONLY)
-    private Long id;
+            example = "101",
+            accessMode = Schema.AccessMode.READ_ONLY)
+    private Integer idInscripcion;
 
-    @Schema(description = "ID del usuario inscrito", example = "12")
-    private Long usuarioId;
+    @Schema(description = "ID del usuario inscrito",
+            example = "12")
+    private Integer usuarioId;
 
-    @Schema(description = "Nombre del usuario inscrito",
-            example = "Carlos Ramírez", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "Nombre completo del usuario inscrito",
+            example = "Carlos Ramírez",
+            accessMode = Schema.AccessMode.READ_ONLY)
     private String usuarioNombre;
 
-    @Schema(description = "ID del curso inscrito", example = "5")
-    private Long cursoId;
+    @Schema(description = "ID del curso inscrito",
+            example = "5")
+    private Integer cursoId;
 
     @Schema(description = "Título del curso inscrito",
-            example = "Curso de Spring Boot Avanzado", accessMode = Schema.AccessMode.READ_ONLY)
+            example = "Curso de Spring Boot Avanzado",
+            accessMode = Schema.AccessMode.READ_ONLY)
     private String cursoTitulo;
 
     @Schema(description = "Progreso del curso en porcentaje",
@@ -41,7 +48,7 @@ public class InscripcionDTO {
     private LocalDate fechaInscripcion;
 
     @Schema(description = "Estado actual de la inscripción",
-            example = "En progreso",
-            allowableValues = {"Inscrito", "En progreso", "Completado"})
+            example = "En_progreso",
+            allowableValues = {"Inscrito", "En_progreso", "Completado"})
     private String estado;
 }

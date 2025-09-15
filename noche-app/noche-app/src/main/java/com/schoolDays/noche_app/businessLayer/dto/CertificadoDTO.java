@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Información completa de un certificado")
@@ -16,20 +15,20 @@ public class CertificadoDTO {
     @Schema(description = "ID único del certificado",
             example = "101",
             accessMode = Schema.AccessMode.READ_ONLY)
-    private Long id;
+    private Integer idCertificado;
 
     @Schema(description = "ID del usuario al que pertenece el certificado",
             example = "12")
-    private Long usuarioId;
+    private Integer usuarioId;
 
-    @Schema(description = "Nombre del usuario certificado",
+    @Schema(description = "Nombre completo del usuario certificado",
             example = "Carlos Ramírez",
             accessMode = Schema.AccessMode.READ_ONLY)
     private String usuarioNombre;
 
     @Schema(description = "ID del curso que genera el certificado",
             example = "5")
-    private Long cursoId;
+    private Integer cursoId;
 
     @Schema(description = "Título del curso certificado",
             example = "Spring Boot Avanzado",
