@@ -12,15 +12,21 @@ import lombok.NoArgsConstructor;
 public class ModuloUpdateDTO {
 
     @Schema(description = "Nuevo título del módulo",
-            example = "Fundamentos de Programación", maxLength = 150)
+            example = "Fundamentos de Programación",
+            maxLength = 150)
     private String titulo;
+
+    @Schema(description = "Nueva descripción del módulo",
+            example = "Conceptos fundamentales de programación orientada a objetos")
+    private String descripcion;
 
     @Schema(description = "Nuevo tipo de contenido del módulo",
             example = "PDF",
-            allowableValues = {"Video", "Texto", "PDF", "Quiz", "Práctica"})
+            allowableValues = {"Video", "Texto", "PDF", "Quiz", "Practica"})
     private String tipo;
 
     @Schema(description = "Nuevo orden del módulo dentro del curso",
-            example = "3")
+            example = "3",
+            minimum = "1")
     private Integer orden;
 }

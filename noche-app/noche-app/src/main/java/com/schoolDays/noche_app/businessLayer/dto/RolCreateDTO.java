@@ -5,22 +5,21 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Información completa del rol de usuario")
-public class RolDTO {
-
-    @Schema(description = "ID único del rol",
-            example = "1",
-            accessMode = Schema.AccessMode.READ_ONLY)
-    private Integer idRol;
+@Schema(description = "Datos para crear un nuevo rol")
+public class RolCreateDTO {
 
     @Schema(description = "Nombre del rol",
-            example = "ADMIN")
+            example = "INSTRUCTOR",
+            required = true,
+            maxLength = 50)
     private String nombreRol;
 
     @Schema(description = "Descripción del rol",
-            example = "Rol con permisos de administración completa")
+            example = "Rol con permisos para crear y gestionar cursos")
     private String descripcion;
 }
+

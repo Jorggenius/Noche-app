@@ -14,18 +14,12 @@ import java.time.LocalDate;
 public class CertificadoCreateDTO {
 
     @Schema(description = "ID del usuario al que pertenece el certificado",
-            example = "12", required = true)
-    private Long usuarioId;
+            example = "12",
+            required = true)
+    private Integer usuarioId;
 
     @Schema(description = "ID del curso que genera el certificado",
-            example = "5", required = true)
-    private Long cursoId;
-
-    @Schema(description = "Fecha de emisión del certificado",
-            example = "2025-09-11", required = true)
-    private LocalDate fechaEmision;
-
-    @Schema(description = "Código único de verificación del certificado",
-            example = "abc123xyz789", required = true, maxLength = 255)
-    private String hash;
+            example = "5",
+            required = true)
+    private Integer cursoId;
 }

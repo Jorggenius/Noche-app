@@ -14,7 +14,7 @@ public class BadgeDTO {
     @Schema(description = "ID único del badge",
             example = "3",
             accessMode = Schema.AccessMode.READ_ONLY)
-    private Long id;
+    private Integer idBadge;
 
     @Schema(description = "Nombre del badge",
             example = "Top Performer")

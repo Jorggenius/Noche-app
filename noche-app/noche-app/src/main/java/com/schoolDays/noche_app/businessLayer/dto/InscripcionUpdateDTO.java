@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -15,15 +14,13 @@ import java.time.LocalDate;
 public class InscripcionUpdateDTO {
 
     @Schema(description = "Nuevo progreso del curso en porcentaje",
-            example = "85.25", minimum = "0.00")
+            example = "85.25",
+            minimum = "0.00",
+            maximum = "100.00")
     private BigDecimal progreso;
-
-    @Schema(description = "Fecha actualizada de inscripción",
-            example = "2025-09-15")
-    private LocalDate fechaInscripcion;
 
     @Schema(description = "Nuevo estado de la inscripción",
             example = "Completado",
-            allowableValues = {"Inscrito", "En progreso", "Completado"})
+            allowableValues = {"Inscrito", "En_progreso", "Completado"})
     private String estado;
 }
