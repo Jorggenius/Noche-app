@@ -38,4 +38,9 @@ public class UsuarioEntity {
 
     @OneToMany(mappedBy = "creadoPor")
     private List<CursoEntity> cursosCreados;
+
+    public String getNombreCompleto() {
+        return nombre + " " + apellido;
+    }
+
 }

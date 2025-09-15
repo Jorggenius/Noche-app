@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Información completa de un certificado")
