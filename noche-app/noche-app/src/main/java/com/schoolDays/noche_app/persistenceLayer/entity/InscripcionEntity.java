@@ -2,35 +2,47 @@ package com.schoolDays.noche_app.persistenceLayer.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * Entidad que representa las inscripciones de usuarios a cursos
+ */
 @Entity
-@Data
+@Table(name = "inscripcion")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class InscripcionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer idInscripcion;
+
+    @Column(nullable = false, precision = 5, scale = 2)
+    private BigDecimal progreso = BigDecimal.ZERO;
 
     @Column(nullable = false)
-    private int progreso;
+    private LocalDate fechaInscripcion = LocalDate.now();
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private LocalDate fechaInscripcion;
+    private Estado estado = Estado.INSCRITO;
 
-    @Column(nullable = false)
-    private boolean estado;
-
-    @OneToOne
-    @JoinColumn(name = "idusuario",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_idusuario", nullable = false)
     private UsuarioEntity usuario;
 
-    @OneToOne
-    @JoinColumn(name = "idcurso", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "curso_idcurso", nullable = false)
     private CursoEntity curso;
+
+    public enum Estado {
+        INSCRITO, EN_PROGRESO, COMPLETADO, SUSPENDIDO
+    }
 }

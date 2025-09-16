@@ -9,31 +9,28 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 /**
- * Entidad que representa los certificados emitidos
+ * Entidad que representa la relación muchos a muchos entre usuarios y badges
  */
 @Entity
-@Table(name = "certificado")
+@Table(name = "usuario_badge")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CertificadoEntity {
+public class UsuarioBadgeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCertificado;
+    private Integer idUsuarioBadge;
 
     @Column(nullable = false)
-    private LocalDate fechaEmision = LocalDate.now();
-
-    @Column(nullable = false, unique = true, length = 255)
-    private String hash;
+    private LocalDate fechaOtorgado = LocalDate.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_idusuario", nullable = false)
     private UsuarioEntity usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "curso_idcurso", nullable = false)
-    private CursoEntity curso;
+    @JoinColumn(name = "badge_idbadge", nullable = false)
+    private BadgeEntity badge;
 }

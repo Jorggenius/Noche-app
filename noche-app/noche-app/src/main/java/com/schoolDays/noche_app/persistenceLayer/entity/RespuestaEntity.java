@@ -2,32 +2,36 @@ package com.schoolDays.noche_app.persistenceLayer.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDate;
-
+/**
+ * Entidad que representa las opciones de respuesta para preguntas MCQ
+ */
 @Entity
-@Data
+@Table(name = "respuesta")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class RespuestaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer idRespuesta;
+
+    @Lob
+    @Column(nullable = false)
+    private String contenido;
 
     @Column(nullable = false)
-    private int puntuacion;
+    private Boolean esCorrecta = false;
 
     @Column(nullable = false)
-    private LocalDate fecha;
+    private Integer orden = 1;
 
-    @OneToOne
-    @JoinColumn(name = "idusuario", nullable = false)
-    private UsuarioEntity usuario;
-
-    @OneToOne
-    @JoinColumn(name = "idevaluacion", nullable = false)
-    private EvaluacionEntity evaluacion;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idPregunta", nullable = false)
+    private PreguntaEntity pregunta;
 }
