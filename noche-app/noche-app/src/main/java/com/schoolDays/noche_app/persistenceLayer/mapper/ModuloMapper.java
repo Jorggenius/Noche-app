@@ -1,8 +1,6 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
 import com.schoolDays.noche_app.businessLayer.dto.ModuloDTO;
-import com.schoolDays.noche_app.persistenceLayer.entity.CursoEntity;
-import com.schoolDays.noche_app.persistenceLayer.entity.ModuloEntity;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -25,8 +23,8 @@ public interface ModuloMapper {
 
     // DTO → Entity (crear)
     @Mapping(target = "idModulo", ignore = true)
-    @Mapping(target = "curso", source = "cursoId", qualifiedByName = "createCursoEntityFromId")
-    @Mapping(target = "evaluaciones", ignore = true) // no se cargan aquí
+    @Mapping(target = "curso.idCurso", source = "cursoId")   // << clave
+    @Mapping(target = "evaluaciones", ignore = true)
     ModuloEntity toEntity(ModuloDTO dto);
 
     // Actualización parcial
@@ -36,14 +34,14 @@ public interface ModuloMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(ModuloDTO dto, @MappingTarget ModuloEntity entity);
 
-    // Método auxiliar para referenciar curso solo por ID
-    @Named("createCursoEntityFromId")
-    default CursoEntity createCursoEntityFromId(Integer idCurso) {
-        if (idCurso == null) {
-            return null;
-        }
-        CursoEntity curso = new CursoEntity();
-        curso.setIdCurso(idCurso);
-        return curso;
-    }
+//    // Método auxiliar para referenciar curso solo por ID
+//    @Named("createCursoEntityFromId")
+//    default CursoEntity createCursoEntityFromId(Integer idCurso) {
+//        if (idCurso == null) {
+//            return null;
+//        }
+//        CursoEntity curso = new CursoEntity();
+//        curso.setIdCurso(idCurso);
+//        return curso;
+//    }
 }

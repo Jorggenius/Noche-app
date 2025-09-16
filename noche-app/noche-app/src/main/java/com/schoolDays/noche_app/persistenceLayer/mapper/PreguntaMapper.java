@@ -1,7 +1,6 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
 import com.schoolDays.noche_app.businessLayer.dto.PreguntaDTO;
-import com.schoolDays.noche_app.persistenceLayer.entity.PreguntaEntity;
 import org.mapstruct.*;
 
 import java.util.List;

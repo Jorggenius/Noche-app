@@ -3,7 +3,6 @@ package com.schoolDays.noche_app.persistenceLayer.mapper;
 import com.schoolDays.noche_app.businessLayer.dto.BadgeCreateDTO;
 import com.schoolDays.noche_app.businessLayer.dto.BadgeDTO;
 import com.schoolDays.noche_app.businessLayer.dto.BadgeUpdateDTO;
-import com.schoolDays.noche_app.persistenceLayer.entity.BadgeEntity;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -23,5 +22,7 @@ public interface BadgeMapper {
 
     // UpdateDTO -> Entity (ignora nulos)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "idBadge", ignore = true)
+    @Mapping(target = "usuarios", ignore = true)
     void updateEntityFromDTO(BadgeUpdateDTO dto, @MappingTarget BadgeEntity entity);
 }

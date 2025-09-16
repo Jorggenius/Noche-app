@@ -1,8 +1,6 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
 import com.schoolDays.noche_app.businessLayer.dto.EvaluacionDTO;
-import com.schoolDays.noche_app.persistenceLayer.entity.EvaluacionEntity;
-import com.schoolDays.noche_app.persistenceLayer.entity.ModuloEntity;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -23,8 +21,8 @@ public interface EvaluacionMapper {
 
     // DTO → Entity (crear)
     @Mapping(target = "idEvaluacion", ignore = true)
-    @Mapping(target = "modulo", source = "moduloId", qualifiedByName = "createModuloEntityFromId")
-    @Mapping(target = "preguntas", ignore = true) // las maneja el servicio
+    @Mapping(target = "modulo.idModulo", source = "moduloId") // 👈 clave
+    @Mapping(target = "preguntas", ignore = true)// las maneja el servicio
     EvaluacionEntity toEntity(EvaluacionDTO dto);
 
     // Actualización parcial
@@ -34,14 +32,14 @@ public interface EvaluacionMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(EvaluacionDTO dto, @MappingTarget EvaluacionEntity entity);
 
-    // Auxiliar: crear un ModuloEntity solo con ID
-    @Named("createModuloEntityFromId")
-    default ModuloEntity createModuloEntityFromId(Integer idModulo) {
-        if (idModulo == null) {
-            return null;
-        }
-        ModuloEntity modulo = new ModuloEntity();
-        modulo.setIdModulo(idModulo);
-        return modulo;
-    }
+//    // Auxiliar: crear un ModuloEntity solo con ID
+//    @Named("createModuloEntityFromId")
+//    default ModuloEntity createModuloEntityFromId(Integer idModulo) {
+//        if (idModulo == null) {
+//            return null;
+//        }
+//        ModuloEntity modulo = new ModuloEntity();
+//        modulo.setIdModulo(idModulo);
+//        return modulo;
+//    }
 }

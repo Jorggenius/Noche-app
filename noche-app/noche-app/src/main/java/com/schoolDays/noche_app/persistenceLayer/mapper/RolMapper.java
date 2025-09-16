@@ -1,9 +1,7 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
 import com.schoolDays.noche_app.businessLayer.dto.RolDTO;
-import com.schoolDays.noche_app.persistenceLayer.entity.RolEntity;
 import org.mapstruct.*;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 

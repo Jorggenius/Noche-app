@@ -4,9 +4,6 @@ package com.schoolDays.noche_app.persistenceLayer.mapper;
 import com.schoolDays.noche_app.businessLayer.dto.InscripcionCreateDTO;
 import com.schoolDays.noche_app.businessLayer.dto.InscripcionDTO;
 import com.schoolDays.noche_app.businessLayer.dto.InscripcionUpdateDTO;
-import com.schoolDays.noche_app.persistenceLayer.entity.CursoEntity;
-import com.schoolDays.noche_app.persistenceLayer.entity.InscripcionEntity;
-import com.schoolDays.noche_app.persistenceLayer.entity.UsuarioEntity;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -29,10 +26,14 @@ public interface InscripcionMapper {
 
     // --- CreateDTO → Entity ---
     @Mapping(target = "idInscripcion", ignore = true)
-    @Mapping(target = "usuario", source = "usuarioId", qualifiedByName = "createUsuarioEntityFromId")
-    @Mapping(target = "curso", source = "cursoId", qualifiedByName = "createCursoEntityFromId")
+    @Mapping(target = "usuario.idUsuario", source = "usuarioId")     // 👈 clave
+    @Mapping(target = "curso.idCurso",     source = "cursoId")       // 👈 clave
+    // Ajusta al tipo real de fechaInscripcion:
     @Mapping(target = "fechaInscripcion", expression = "java(java.time.LocalDate.now())")
-    @Mapping(target = "progreso", constant = "0.00") // inicia en 0
+    // Ajusta al tipo real de 'progreso':
+    // - Si es BigDecimal: usa expression con BigDecimal
+    // - Si es Double/Float: puedes usar constant = "0.0"
+    @Mapping(target = "progreso", expression = "java(new java.math.BigDecimal(\"0.00\"))")
     @Mapping(target = "estado", constant = "Inscrito")
     InscripcionEntity toEntity(InscripcionCreateDTO dto);
 
@@ -44,20 +45,20 @@ public interface InscripcionMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(InscripcionUpdateDTO dto, @MappingTarget InscripcionEntity entity);
 
-    // --- Helpers para crear entidades "proxy" con solo el ID ---
-    @Named("createUsuarioEntityFromId")
-    default UsuarioEntity createUsuarioEntityFromId(Integer idUsuario) {
-        if (idUsuario == null) return null;
-        UsuarioEntity usuario = new UsuarioEntity();
-        usuario.setIdUsuario(idUsuario);
-        return usuario;
-    }
-
-    @Named("createCursoEntityFromId")
-    default CursoEntity createCursoEntityFromId(Integer idCurso) {
-        if (idCurso == null) return null;
-        CursoEntity curso = new CursoEntity();
-        curso.setIdCurso(idCurso);
-        return curso;
-    }
+//    // --- Helpers para crear entidades "proxy" con solo el ID ---
+//    @Named("createUsuarioEntityFromId")
+//    default UsuarioEntity createUsuarioEntityFromId(Integer idUsuario) {
+//        if (idUsuario == null) return null;
+//        UsuarioEntity usuario = new UsuarioEntity();
+//        usuario.setIdUsuario(idUsuario);
+//        return usuario;
+//    }
+//
+//    @Named("createCursoEntityFromId")
+//    default CursoEntity createCursoEntityFromId(Integer idCurso) {
+//        if (idCurso == null) return null;
+//        CursoEntity curso = new CursoEntity();
+//        curso.setIdCurso(idCurso);
+//        return curso;
+//    }
 }
