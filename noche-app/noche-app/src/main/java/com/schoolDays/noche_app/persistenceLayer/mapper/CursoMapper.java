@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
 import com.schoolDays.noche_app.businessLayer.dto.CursoDTO;
+import com.schoolDays.noche_app.persistenceLayer.entity.CursoEntity;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -11,10 +12,10 @@ import java.util.List;
 )
 public interface CursoMapper {
 
+
     // Entity → DTO
     @Mapping(target = "creadoPorId", source = "creadoPor.idUsuario")
-    @Mapping(target = "creadorNombre", source = "creadoPor.nombre")
-    @Mapping(target = "creadorApellido", source = "creadoPor.apellido")
+    @Mapping(target = "creadoPorNombre", source = "creadoPor.nombre") // 👈 usa solo lo que existe en el DTO
     CursoDTO toDTO(CursoEntity entity);
 
     // Lista de entidades → lista de DTOs
@@ -22,7 +23,7 @@ public interface CursoMapper {
 
     // DTO → Entity (crear)
     @Mapping(target = "idCurso", ignore = true)
-    @Mapping(target = "creadoPor.idUsuario", source = "creadoPorId") // 👈 convierte Integer → UsuarioEntity(id)
+    @Mapping(target = "creadoPor.idUsuario", source = "creadoPorId")
     @Mapping(target = "modulos", ignore = true)
     CursoEntity toEntity(CursoDTO dto);
 
@@ -32,15 +33,4 @@ public interface CursoMapper {
     @Mapping(target = "creadoPor", ignore = true)
     @Mapping(target = "modulos", ignore = true)
     void updateEntityFromDTO(CursoDTO dto, @MappingTarget CursoEntity entity);
-
-//    // Método auxiliar: crear UsuarioEntity solo con el id
-//    @Named("createUsuarioEntityFromId")
-//    default UsuarioEntity createUsuarioEntityFromId(Integer idUsuario) {
-//        if (idUsuario == null) {
-//            return null;
-//        }
-//        UsuarioEntity usuario = new UsuarioEntity();
-//        usuario.setIdUsuario(idUsuario);
-//        return usuario;
-//    }
 }

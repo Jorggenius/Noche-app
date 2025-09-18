@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
 import com.schoolDays.noche_app.businessLayer.dto.PreguntaDTO;
+import com.schoolDays.noche_app.persistenceLayer.entity.PreguntaEntity;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -13,9 +14,10 @@ import java.util.List;
 public interface PreguntaMapper {
 
     // Entity → DTO
-    @Mapping(target = "evaluacionId", source = "evaluacion.idEvaluacion")
+    @Mapping(target = "idEvaluacion", source = "evaluacion.idEvaluacion")
     @Mapping(target = "evaluacionTitulo", source = "evaluacion.titulo")
     PreguntaDTO toDTO(PreguntaEntity entity);
+
 
     List<PreguntaDTO> toDTOList(List<PreguntaEntity> entities);
 
