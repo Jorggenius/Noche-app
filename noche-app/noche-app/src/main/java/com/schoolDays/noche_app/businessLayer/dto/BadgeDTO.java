@@ -5,26 +5,36 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * DTO único para badges
+ * Usado para crear, leer y actualizar badges
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Información completa de un badge")
+@Schema(description = "Información del badge")
 public class BadgeDTO {
 
     @Schema(description = "ID único del badge",
-            example = "3",
+            example = "1",
             accessMode = Schema.AccessMode.READ_ONLY)
     private Integer idBadge;
 
     @Schema(description = "Nombre del badge",
-            example = "Top Performer")
+            example = "Primer Paso",
+            required = true,
+            maxLength = 100)
     private String nombre;
 
-    @Schema(description = "Criterio o condición para otorgar el badge",
-            example = "Completar 5 cursos en menos de 1 mes")
+    @Schema(description = "Criterio para obtener el badge",
+            example = "Completar tu primer curso",
+            required = true,
+            maxLength = 500)
     private String criterio;
 
-    @Schema(description = "Ruta o nombre del icono asociado",
-            example = "icons/top_performer.png")
+    @Schema(description = "Ruta del icono",
+            example = "icons/primer_paso.png",
+            maxLength = 255)
     private String icono;
 }
+

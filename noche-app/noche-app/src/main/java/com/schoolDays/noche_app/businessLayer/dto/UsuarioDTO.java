@@ -6,41 +6,55 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO COMPLETO de usuarios - Para LECTURA/RESPUESTAS
- *
- * ¿POR QUÉ ESTE DTO?
- * - Se usa cuando DEVOLVEMOS información completa al cliente
- * - Incluye el ID (solo lectura) y todos los campos de la entidad
- *
- * USO: GET /usuarios/{id}, GET /usuarios, respuestas de POST/PUT
+ * DTO único para usuarios del sistema
+ * Usado para crear, leer y actualizar usuarios
  */
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Información completa de un usuario")
+@Schema(description = "Información del usuario")
 public class UsuarioDTO {
 
-    @Schema(description = "ID único del usuario", example = "1")
+    @Schema(description = "ID único del usuario",
+            example = "1",
+            accessMode = Schema.AccessMode.READ_ONLY)
     private Integer idUsuario;
 
-    @Schema(description = "Nombre del usuario", example = "Carlos")
+    @Schema(description = "Nombre del usuario",
+            example = "Carlos",
+            required = true,
+            maxLength = 100)
     private String nombre;
 
-    @Schema(description = "Apellido del usuario", example = "Pérez")
+    @Schema(description = "Apellido del usuario",
+            example = "Pérez",
+            required = true,
+            maxLength = 100)
     private String apellido;
 
-    @Schema(description = "Correo electrónico", example = "carlos.perez@empresa.com")
-    private String correo;
+    @Schema(description = "Correo electrónico del usuario",
+            example = "carlos.perez@empresa.com",
+            required = true,
+            maxLength = 150)
+    private String email;
 
-    @Schema(description = "Departamento del usuario", example = "Ventas")
+    @Schema(description = "Contraseña del usuario",
+            example = "password123",
+            required = true)
+    private String contrasena;
+
+    @Schema(description = "Departamento del usuario",
+            example = "Recursos Humanos",
+            maxLength = 100)
     private String departamento;
 
-    @Schema(description = "ID del rol", example = "2")
-    private Integer rolId;
+    @Schema(description = "ID del rol asignado",
+            example = "2",
+            required = true)
+    private Integer idRol;
 
-    @Schema(description = "Nombre del rol", example = "Instructor")
-    private String rolNombre;
+    @Schema(description = "Nombre del rol",
+            example = "USER",
+            accessMode = Schema.AccessMode.READ_ONLY)
+    private String nombreRol;
 }

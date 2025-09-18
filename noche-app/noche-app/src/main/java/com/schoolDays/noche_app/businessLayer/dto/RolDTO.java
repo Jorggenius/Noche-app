@@ -5,10 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * DTO único para roles del sistema
+ * Usado para crear, leer y actualizar roles
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Información completa del rol de usuario")
+@Schema(description = "Información del rol")
 public class RolDTO {
 
     @Schema(description = "ID único del rol",
@@ -17,10 +21,13 @@ public class RolDTO {
     private Integer idRol;
 
     @Schema(description = "Nombre del rol",
-            example = "ADMIN")
+            example = "ADMIN",
+            required = true,
+            maxLength = 50)
     private String nombreRol;
 
     @Schema(description = "Descripción del rol",
-            example = "Rol con permisos de administración completa")
+            example = "Administrador del sistema con permisos completos",
+            maxLength = 255)
     private String descripcion;
 }

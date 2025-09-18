@@ -7,42 +7,48 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * DTO único para usuario-badge (asignaciones)
+ * Usado para crear, leer y actualizar asignaciones de badges
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Información completa de un badge otorgado a un usuario")
+@Schema(description = "Información de asignación de badge")
 public class UsuarioBadgeDTO {
 
     @Schema(description = "ID único de la asignación",
-            example = "401",
+            example = "1",
             accessMode = Schema.AccessMode.READ_ONLY)
     private Integer idUsuarioBadge;
 
-    @Schema(description = "ID del usuario",
-            example = "12")
-    private Integer usuarioId;
+    @Schema(description = "Fecha de otorgamiento",
+            example = "2025-09-16",
+            required = true)
+    private LocalDate fechaOtorgado;
 
-    @Schema(description = "Nombre completo del usuario",
-            example = "Carlos Ramírez",
+    @Schema(description = "ID del usuario",
+            example = "1",
+            required = true)
+    private Integer idUsuario;
+
+    @Schema(description = "Nombre del usuario",
+            example = "Carlos Pérez",
             accessMode = Schema.AccessMode.READ_ONLY)
     private String usuarioNombre;
 
     @Schema(description = "ID del badge",
-            example = "3")
-    private Integer badgeId;
+            example = "1",
+            required = true)
+    private Integer idBadge;
 
     @Schema(description = "Nombre del badge",
-            example = "Top Performer",
+            example = "Primer Paso",
             accessMode = Schema.AccessMode.READ_ONLY)
     private String badgeNombre;
 
     @Schema(description = "Icono del badge",
-            example = "icons/top_performer.png",
+            example = "icons/primer_paso.png",
             accessMode = Schema.AccessMode.READ_ONLY)
     private String badgeIcono;
-
-    @Schema(description = "Fecha en que se otorgó el badge",
-            example = "2025-09-14")
-    private LocalDate fechaOtorgado;
 }
-

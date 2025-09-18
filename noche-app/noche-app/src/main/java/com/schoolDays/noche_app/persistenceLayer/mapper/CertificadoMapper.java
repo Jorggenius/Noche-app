@@ -1,6 +1,5 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
-import com.schoolDays.noche_app.businessLayer.dto.CertificadoCreateDTO;
 import com.schoolDays.noche_app.businessLayer.dto.CertificadoDTO;
 import com.schoolDays.noche_app.businessLayer.dto.CertificadoUpdateDTO;
 import org.mapstruct.*;
