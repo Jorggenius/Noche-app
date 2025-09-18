@@ -8,47 +8,54 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-
-
+/**
+ * DTO único para inscripciones
+ * Usado para crear, leer y actualizar inscripciones
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Información completa de una inscripción")
+@Schema(description = "Información de la inscripción")
 public class InscripcionDTO {
 
     @Schema(description = "ID único de la inscripción",
-            example = "101",
+            example = "1",
             accessMode = Schema.AccessMode.READ_ONLY)
     private Integer idInscripcion;
 
-    @Schema(description = "ID del usuario inscrito",
-            example = "12")
-    private Integer usuarioId;
+    @Schema(description = "Progreso del curso (0-100)",
+            example = "75.5",
+            minimum = "0",
+            maximum = "100")
+    private BigDecimal progreso;
 
-    @Schema(description = "Nombre completo del usuario inscrito",
-            example = "Carlos Ramírez",
+    @Schema(description = "Fecha de inscripción",
+            example = "2025-09-16",
+            required = true)
+    private LocalDate fechaInscripcion;
+
+    @Schema(description = "Estado de la inscripción",
+            example = "EN_PROGRESO",
+            allowableValues = {"INSCRITO", "EN_PROGRESO", "COMPLETADO", "SUSPENDIDO"})
+    private String estado;
+
+    @Schema(description = "ID del usuario inscrito",
+            example = "1",
+            required = true)
+    private Integer idUsuario;
+
+    @Schema(description = "Nombre del usuario",
+            example = "Carlos Pérez",
             accessMode = Schema.AccessMode.READ_ONLY)
     private String usuarioNombre;
 
-    @Schema(description = "ID del curso inscrito",
-            example = "5")
-    private Integer cursoId;
+    @Schema(description = "ID del curso",
+            example = "1",
+            required = true)
+    private Integer idCurso;
 
-    @Schema(description = "Título del curso inscrito",
-            example = "Curso de Spring Boot Avanzado",
+    @Schema(description = "Título del curso",
+            example = "Introducción a Spring Boot",
             accessMode = Schema.AccessMode.READ_ONLY)
     private String cursoTitulo;
-
-    @Schema(description = "Progreso del curso en porcentaje",
-            example = "75.50")
-    private BigDecimal progreso;
-
-    @Schema(description = "Fecha en que se realizó la inscripción",
-            example = "2025-09-11")
-    private LocalDate fechaInscripcion;
-
-    @Schema(description = "Estado actual de la inscripción",
-            example = "En_progreso",
-            allowableValues = {"Inscrito", "En_progreso", "Completado"})
-    private String estado;
 }

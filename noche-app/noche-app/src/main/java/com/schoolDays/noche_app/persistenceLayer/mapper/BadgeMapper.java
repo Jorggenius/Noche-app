@@ -1,8 +1,6 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
-import com.schoolDays.noche_app.businessLayer.dto.BadgeCreateDTO;
 import com.schoolDays.noche_app.businessLayer.dto.BadgeDTO;
-import com.schoolDays.noche_app.businessLayer.dto.BadgeUpdateDTO;
 import org.mapstruct.*;
 
 import java.util.List;

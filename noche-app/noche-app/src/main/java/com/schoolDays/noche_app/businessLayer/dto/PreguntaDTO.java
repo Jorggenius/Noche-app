@@ -5,32 +5,44 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
+/**
+ * DTO único para preguntas
+ * Usado para crear, leer y actualizar preguntas
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Información completa de una pregunta")
+@Schema(description = "Información de la pregunta")
 public class PreguntaDTO {
 
     @Schema(description = "ID único de la pregunta",
-            example = "7",
+            example = "1",
             accessMode = Schema.AccessMode.READ_ONLY)
     private Integer idPregunta;
 
-    @Schema(description = "Texto del enunciado de la pregunta",
-            example = "¿Qué significa JDK en Java?")
+    @Schema(description = "Enunciado de la pregunta",
+            example = "¿Qué es una variable en Java?",
+            required = true)
     private String enunciado;
 
-    @Schema(description = "ID de la evaluación asociada",
-            example = "3")
-    private Integer evaluacionId;
+    @Schema(description = "Tipo de pregunta",
+            example = "MULTIPLE_CHOICE",
+            required = true,
+            allowableValues = {"MULTIPLE_CHOICE", "VERDADERO_FALSO", "ABIERTA"})
+    private String tipoPregunta;
 
-    @Schema(description = "Título de la evaluación asociada",
-            example = "Evaluación de Fundamentos de Java",
+    @Schema(description = "Orden de la pregunta",
+            example = "1",
+            minimum = "1")
+    private Integer orden;
+
+    @Schema(description = "ID de la evaluación",
+            example = "1",
+            required = true)
+    private Integer idEvaluacion;
+
+    @Schema(description = "Título de la evaluación",
+            example = "Examen final de Java",
             accessMode = Schema.AccessMode.READ_ONLY)
     private String evaluacionTitulo;
-
-    @Schema(description = "Listado de opciones de respuesta para la pregunta")
-    private List<RespuestaDTO> respuestas;
 }

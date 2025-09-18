@@ -7,54 +7,61 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * DTO único para cursos
+ * Usado para crear, leer y actualizar cursos
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Información completa de un curso")
+@Schema(description = "Información del curso")
 public class CursoDTO {
 
     @Schema(description = "ID único del curso",
-            example = "5",
+            example = "1",
             accessMode = Schema.AccessMode.READ_ONLY)
     private Integer idCurso;
 
     @Schema(description = "Título del curso",
-            example = "Curso de Programación en Java")
+            example = "Introducción a Spring Boot",
+            required = true,
+            maxLength = 150)
     private String titulo;
 
     @Schema(description = "Descripción del curso",
-            example = "Aprende Java desde cero con ejercicios prácticos")
+            example = "Curso introductorio sobre el framework Spring Boot",
+            maxLength = 500)
     private String descripcion;
 
-    @Schema(description = "Nivel de dificultad",
-            example = "Intermedio")
+    @Schema(description = "Duración estimada en horas",
+            example = "40",
+            required = true,
+            minimum = "1")
+    private Integer duracion;
+
+    @Schema(description = "Nivel del curso",
+            example = "BASICO",
+            required = true,
+            allowableValues = {"BASICO", "INTERMEDIO", "AVANZADO"})
     private String nivel;
 
-    @Schema(description = "Duración estimada en horas",
-            example = "40")
-    private Integer duracionEstimada;
-
     @Schema(description = "Fecha de creación",
-            example = "2025-09-13",
+            example = "2025-09-16",
             accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDate fechaCreacion;
 
     @Schema(description = "Versión del curso",
-            example = "2")
+            example = "1",
+            accessMode = Schema.AccessMode.READ_ONLY)
     private Integer version;
 
-    @Schema(description = "ID del usuario que creó el curso",
-            example = "12",
+    @Schema(description = "ID del usuario creador",
+            example = "1",
             required = true)
     private Integer creadoPorId;
 
-    @Schema(description = "Nombre del creador del curso",
-            example = "María",
+    @Schema(description = "Nombre del creador",
+            example = "María González",
             accessMode = Schema.AccessMode.READ_ONLY)
-    private String creadorNombre;
-
-    @Schema(description = "Apellido del creador del curso",
-            example = "González",
-            accessMode = Schema.AccessMode.READ_ONLY)
-    private String creadorApellido;
+    private String creadoPorNombre;
 }

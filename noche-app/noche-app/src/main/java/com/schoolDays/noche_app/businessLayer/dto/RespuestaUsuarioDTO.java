@@ -5,48 +5,39 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * DTO único para respuestas de usuario
+ * Usado para crear, leer y actualizar respuestas de usuarios
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Información completa de la respuesta de un usuario")
+@Schema(description = "Información de la respuesta del usuario")
 public class RespuestaUsuarioDTO {
 
     @Schema(description = "ID único de la respuesta del usuario",
-            example = "301",
+            example = "1",
             accessMode = Schema.AccessMode.READ_ONLY)
     private Integer idRespuestaUsuario;
 
-    @Schema(description = "ID del usuario que respondió",
-            example = "12")
-    private Integer usuarioId;
+    @Schema(description = "Fecha de la respuesta",
+            example = "2025-09-16")
+    private LocalDate fecha;
 
-    @Schema(description = "Nombre del usuario",
-            example = "Carlos Ramírez",
-            accessMode = Schema.AccessMode.READ_ONLY)
-    private String usuarioNombre;
+    @Schema(description = "Puntuación obtenida",
+            example = "10.00",
+            minimum = "0")
+    private BigDecimal puntuacion;
 
-    @Schema(description = "ID de la pregunta respondida",
-            example = "7")
-    private Integer preguntaId;
+    @Schema(description = "ID de la opción seleccionada (para MCQ)",
+            example = "1")
+    private Integer idRespuestaSeleccionada;
 
-    @Schema(description = "Enunciado de la pregunta",
-            example = "¿Qué significa JDK en Java?",
-            accessMode = Schema.AccessMode.READ_ONLY)
-    private String preguntaEnunciado;
-
-    @Schema(description = "ID de la opción seleccionada (para preguntas MCQ)",
-            example = "15")
-    private Integer respuestaId;
-
-    @Schema(description = "Contenido de la opción seleccionada",
-            example = "Java Development Kit",
-            accessMode = Schema.AccessMode.READ_ONLY)
-    private String respuestaContenido;
-
-    @Schema(description = "Texto de la respuesta (para preguntas abiertas)",
-            example = "Java Development Kit es un conjunto de herramientas...")
+    @Schema(description = "Texto de respuesta (para preguntas abiertas)",
+            example = "Una variable es un espacio en memoria...")
     private String respuestaTexto;
 
     @Schema(description = "Indica si la respuesta fue correcta",
@@ -54,7 +45,28 @@ public class RespuestaUsuarioDTO {
             accessMode = Schema.AccessMode.READ_ONLY)
     private Boolean correcta;
 
-    @Schema(description = "Fecha en que se registró la respuesta",
-            example = "2025-09-14")
-    private LocalDate fecha;
+    @Schema(description = "ID de la evaluación",
+            example = "1",
+            required = true)
+    private Integer idEvaluacion;
+
+    @Schema(description = "ID del usuario",
+            example = "1",
+            required = true)
+    private Integer idUsuario;
+
+    @Schema(description = "Nombre del usuario",
+            example = "Carlos Pérez",
+            accessMode = Schema.AccessMode.READ_ONLY)
+    private String usuarioNombre;
+
+    @Schema(description = "ID de la pregunta",
+            example = "1",
+            required = true)
+    private Integer idPregunta;
+
+    @Schema(description = "Enunciado de la pregunta",
+            example = "¿Qué es una variable en Java?",
+            accessMode = Schema.AccessMode.READ_ONLY)
+    private String preguntaEnunciado;
 }
