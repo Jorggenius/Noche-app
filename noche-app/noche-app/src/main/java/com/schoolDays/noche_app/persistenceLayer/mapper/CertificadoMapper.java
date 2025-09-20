@@ -1,24 +1,18 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
-import com.schoolDays.noche_app.businessLayer.dto.CertificadoDTO;
+import com.schoolDays.noche_app.businessLayer.CertificadoDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.CertificadoEntity;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.mapstruct.*;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-@NoArgsConstructor
-@AllArgsConstructor
 public interface CertificadoMapper {
 
-
-
     // Entity -> DTO
-    @Mapping(target = "idUsuario", source = "usuario.idUsuario") // <-- corregido
+    @Mapping(target = "idUsuario", source = "usuario.idUsuario")
     @Mapping(target = "usuarioNombre", source = "usuario.nombre")
-    @Mapping(target = "idCurso", source = "curso.idCurso")       // <-- corregido
+    @Mapping(target = "idCurso", source = "curso.idCurso")
     @Mapping(target = "cursoTitulo", source = "curso.titulo")
     CertificadoDTO toDTO(CertificadoEntity entity);
 
@@ -32,5 +26,10 @@ public interface CertificadoMapper {
     @Mapping(target = "hash", expression = "java(java.util.UUID.randomUUID().toString())")
     CertificadoEntity toEntity(CertificadoDTO dto);
 
-    void updateEntityFromDTO(CertificadoDTO certificadoDTO, CertificadoEntity existingEntity);
+    @Mapping(target = "idCertificado", ignore = true)
+    @Mapping(target = "fechaEmision", ignore = true)
+    @Mapping(target = "hash", ignore = true)
+    @Mapping(target = "usuario.idUsuario", source = "idUsuario")
+    @Mapping(target = "curso.idCurso", source = "idCurso")
+    CertificadoEntity updateEntityFromDTO(CertificadoDTO certificadoDTO, @MappingTarget CertificadoEntity existingEntity);
 }

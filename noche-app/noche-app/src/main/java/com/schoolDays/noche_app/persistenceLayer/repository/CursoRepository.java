@@ -12,8 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface CursoRepository extends JpaRepository<CursoEntity, Integer> {
 
     List<CursoEntity> findByCreadoPor_IdUsuario(Integer idUsuario);

@@ -12,8 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface EvaluacionRepository extends JpaRepository<EvaluacionEntity, Integer> {
 
     List<EvaluacionEntity> findByModulo_IdModulo(Integer idModulo);

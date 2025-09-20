@@ -1,6 +1,6 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
-import com.schoolDays.noche_app.businessLayer.dto.BadgeDTO;
+import com.schoolDays.noche_app.businessLayer.BadgeDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.BadgeEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -9,8 +9,7 @@ import org.mapstruct.*;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface BadgeMapper {
 
     // Entity -> DTO

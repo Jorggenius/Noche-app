@@ -12,8 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface RespuestaUsuarioRepository extends JpaRepository<RespuestaUsuarioEntity, Integer> {
 
     List<RespuestaUsuarioEntity> findByUsuario_IdUsuario(Integer idUsuario);

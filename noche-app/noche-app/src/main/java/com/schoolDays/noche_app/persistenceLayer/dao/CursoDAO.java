@@ -1,6 +1,6 @@
 package com.schoolDays.noche_app.persistenceLayer.dao;
 
-import com.schoolDays.noche_app.businessLayer.dto.CursoDTO;
+import com.schoolDays.noche_app.businessLayer.CursoDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.CursoEntity;
 import com.schoolDays.noche_app.persistenceLayer.mapper.CursoMapper;
 import com.schoolDays.noche_app.persistenceLayer.repository.CursoRepository;

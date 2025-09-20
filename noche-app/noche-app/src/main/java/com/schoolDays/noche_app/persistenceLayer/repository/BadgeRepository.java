@@ -10,8 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface BadgeRepository extends JpaRepository<BadgeEntity, Integer> {
 
     List<BadgeEntity> findByNombreContainingIgnoreCase(String nombre);
