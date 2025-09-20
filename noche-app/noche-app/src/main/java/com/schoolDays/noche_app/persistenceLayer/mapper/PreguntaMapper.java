@@ -2,6 +2,8 @@ package com.schoolDays.noche_app.persistenceLayer.mapper;
 
 import com.schoolDays.noche_app.businessLayer.dto.PreguntaDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.PreguntaEntity;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.List;
         uses = {RespuestaMapper.class},
         unmappedTargetPolicy = ReportingPolicy.WARN
 )
+@NoArgsConstructor
+@AllArgsConstructor
 public interface PreguntaMapper {
 
     // Entity → DTO

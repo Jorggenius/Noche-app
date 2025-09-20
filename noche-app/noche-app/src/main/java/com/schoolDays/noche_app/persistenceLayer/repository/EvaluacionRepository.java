@@ -1,6 +1,8 @@
 package com.schoolDays.noche_app.persistenceLayer.repository;
 
 import com.schoolDays.noche_app.persistenceLayer.entity.EvaluacionEntity;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +12,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
+@NoArgsConstructor
+@AllArgsConstructor
 public interface EvaluacionRepository extends JpaRepository<EvaluacionEntity, Integer> {
 
     List<EvaluacionEntity> findByModulo_IdModulo(Integer idModulo);

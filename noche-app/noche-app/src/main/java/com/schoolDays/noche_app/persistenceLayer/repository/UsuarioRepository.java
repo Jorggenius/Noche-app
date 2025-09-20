@@ -1,6 +1,8 @@
 package com.schoolDays.noche_app.persistenceLayer.repository;
 
 import com.schoolDays.noche_app.persistenceLayer.entity.UsuarioEntity;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@NoArgsConstructor
+@AllArgsConstructor
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer> {
 
     Optional<UsuarioEntity> findByEmail(String email);

@@ -1,6 +1,8 @@
 package com.schoolDays.noche_app.persistenceLayer.repository;
 
 import com.schoolDays.noche_app.persistenceLayer.entity.PreguntaEntity;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+@NoArgsConstructor
+@AllArgsConstructor
 public interface PreguntaRepository extends JpaRepository<PreguntaEntity, Integer> {
 
     List<PreguntaEntity> findByEvaluacion_IdEvaluacionOrderByOrdenAsc(Integer idEvaluacion);

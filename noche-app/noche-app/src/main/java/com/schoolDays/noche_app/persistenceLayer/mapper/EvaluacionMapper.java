@@ -2,6 +2,8 @@ package com.schoolDays.noche_app.persistenceLayer.mapper;
 
 import com.schoolDays.noche_app.businessLayer.dto.EvaluacionDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.EvaluacionEntity;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.List;
         uses = {PreguntaMapper.class}, // 👈 se integran preguntas
         unmappedTargetPolicy = ReportingPolicy.WARN
 )
+@NoArgsConstructor
+@AllArgsConstructor
 public interface EvaluacionMapper {
 
     // Entity → DTO

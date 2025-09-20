@@ -1,6 +1,8 @@
 package com.schoolDays.noche_app.persistenceLayer.repository;
 
 import com.schoolDays.noche_app.persistenceLayer.entity.UsuarioBadgeEntity;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +12,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
+@NoArgsConstructor
+@AllArgsConstructor
 public interface UsuarioBadgeRepository extends JpaRepository<UsuarioBadgeEntity, Integer> {
 
     List<UsuarioBadgeEntity> findByUsuario_IdUsuario(Integer idUsuario);

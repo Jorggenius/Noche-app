@@ -2,6 +2,8 @@ package com.schoolDays.noche_app.persistenceLayer.mapper;
 
 import com.schoolDays.noche_app.businessLayer.dto.InscripcionDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.InscripcionEntity;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.List;
         componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.WARN
 )
+@NoArgsConstructor
+@AllArgsConstructor
 public interface InscripcionMapper {
 
     // --- Entity → DTO ---
@@ -26,4 +30,6 @@ public interface InscripcionMapper {
     @Mapping(target = "usuario.idUsuario", source = "idUsuario")
     @Mapping(target = "curso.idCurso", source = "idCurso")
     InscripcionEntity toEntity(InscripcionDTO dto);
+
+    void updateEntityFromDTO(InscripcionDTO inscripcionDTO, InscripcionEntity existingEntity);
 }
