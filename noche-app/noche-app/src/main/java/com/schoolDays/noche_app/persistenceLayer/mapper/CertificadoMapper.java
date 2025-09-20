@@ -2,11 +2,15 @@ package com.schoolDays.noche_app.persistenceLayer.mapper;
 
 import com.schoolDays.noche_app.businessLayer.dto.CertificadoDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.CertificadoEntity;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.mapstruct.*;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
+@NoArgsConstructor
+@AllArgsConstructor
 public interface CertificadoMapper {
 
 
@@ -27,4 +31,6 @@ public interface CertificadoMapper {
     @Mapping(target = "fechaEmision", expression = "java(java.time.LocalDate.now())")
     @Mapping(target = "hash", expression = "java(java.util.UUID.randomUUID().toString())")
     CertificadoEntity toEntity(CertificadoDTO dto);
+
+    void updateEntityFromDTO(CertificadoDTO certificadoDTO, CertificadoEntity existingEntity);
 }
