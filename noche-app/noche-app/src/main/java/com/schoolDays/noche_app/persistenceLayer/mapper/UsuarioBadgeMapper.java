@@ -1,21 +1,17 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
-import com.schoolDays.noche_app.businessLayer.dto.UsuarioBadgeDTO;
+import com.schoolDays.noche_app.businessLayer.UsuarioBadgeDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.UsuarioBadgeEntity;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.mapstruct.*;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-@NoArgsConstructor
-@AllArgsConstructor
 public interface UsuarioBadgeMapper {
 
     // Entity → DTO
     @Mapping(target = "idUsuario", source = "usuario.idUsuario")
-    @Mapping(target = "usuarioNombre", source = "usuario.nombre") // 👈 cambia aquí
+    @Mapping(target = "usuarioNombre", source = "usuario.nombre")
     @Mapping(target = "idBadge", source = "badge.idBadge")
     @Mapping(target = "badgeNombre", source = "badge.nombre")
     UsuarioBadgeDTO toDTO(UsuarioBadgeEntity entity);
@@ -27,5 +23,7 @@ public interface UsuarioBadgeMapper {
     @Mapping(target = "badge.idBadge", source = "idBadge")
     UsuarioBadgeEntity toEntity(UsuarioBadgeDTO dto);
 
-    void updateEntityFromDTO(UsuarioBadgeDTO usuarioBadgeDTO, UsuarioBadgeEntity existingEntity);
+    @Mapping(target = "usuario.idUsuario", source = "idUsuario")
+    @Mapping(target = "badge.idBadge", source = "idBadge")
+    UsuarioBadgeEntity updateEntityFromDTO(UsuarioBadgeDTO usuarioBadgeDTO, @MappingTarget UsuarioBadgeEntity existingEntity);
 }

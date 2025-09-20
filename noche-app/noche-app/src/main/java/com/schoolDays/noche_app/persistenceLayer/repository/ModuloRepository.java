@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface ModuloRepository extends JpaRepository<ModuloEntity, Integer> {
 
     List<ModuloEntity> findByCurso_IdCursoOrderByOrdenAsc(Integer idCurso);

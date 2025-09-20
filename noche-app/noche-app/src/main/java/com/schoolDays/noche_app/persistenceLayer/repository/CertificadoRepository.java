@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface CertificadoRepository extends JpaRepository<CertificadoEntity, Integer> {
 
     List<CertificadoEntity> findByUsuario_IdUsuario(Integer idUsuario);

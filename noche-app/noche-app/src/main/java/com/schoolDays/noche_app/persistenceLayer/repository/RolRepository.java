@@ -9,8 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface RolRepository extends JpaRepository<RolEntity, Integer> {
 
     Optional<RolEntity> findByNombreRol(String nombreRol);

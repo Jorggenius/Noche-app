@@ -1,6 +1,6 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
-import com.schoolDays.noche_app.businessLayer.dto.RolDTO;
+import com.schoolDays.noche_app.businessLayer.RolDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.RolEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -12,8 +12,7 @@ import java.util.List;
         componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.WARN
 )
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface RolMapper {
 
     // Convierte RolEntity → RolDTO

@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface InscripcionRepository extends JpaRepository<InscripcionEntity, Integer> {
 
     List<InscripcionEntity> findByUsuario_IdUsuario(Integer idUsuario);

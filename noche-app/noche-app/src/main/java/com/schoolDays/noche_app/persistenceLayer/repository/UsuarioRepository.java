@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer> {
 
     Optional<UsuarioEntity> findByEmail(String email);

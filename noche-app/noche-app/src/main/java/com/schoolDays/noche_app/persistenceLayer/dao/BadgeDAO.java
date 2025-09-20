@@ -1,6 +1,6 @@
 package com.schoolDays.noche_app.persistenceLayer.dao;
 
-import com.schoolDays.noche_app.businessLayer.dto.BadgeDTO;
+import com.schoolDays.noche_app.businessLayer.BadgeDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.BadgeEntity;
 import com.schoolDays.noche_app.persistenceLayer.mapper.BadgeMapper;
 import com.schoolDays.noche_app.persistenceLayer.repository.BadgeRepository;

@@ -1,13 +1,12 @@
 package com.schoolDays.noche_app.persistenceLayer.dao;
 
-import com.schoolDays.noche_app.businessLayer.dto.CertificadoDTO;
+import com.schoolDays.noche_app.businessLayer.CertificadoDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.CertificadoEntity;
 import com.schoolDays.noche_app.persistenceLayer.mapper.CertificadoMapper;
 import com.schoolDays.noche_app.persistenceLayer.repository.CertificadoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 

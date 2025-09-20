@@ -12,8 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface RespuestaRepository extends JpaRepository<RespuestaEntity, Integer> {
 
     List<RespuestaEntity> findByPregunta_IdPreguntaOrderByOrdenAsc(Integer idPregunta);

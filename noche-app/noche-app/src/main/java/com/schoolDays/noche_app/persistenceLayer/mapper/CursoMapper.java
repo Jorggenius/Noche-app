@@ -1,6 +1,6 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
-import com.schoolDays.noche_app.businessLayer.dto.CursoDTO;
+import com.schoolDays.noche_app.businessLayer.CursoDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.CursoEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -12,8 +12,7 @@ import java.util.List;
         componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.WARN
 )
-@NoArgsConstructor
-@AllArgsConstructor
+
 public interface CursoMapper {
 
 
