@@ -69,6 +69,9 @@ public class UsuarioBadgeDAO {
         List<UsuarioBadgeEntity> entities = usuarioBadgeRepository.findByUsuarioDepartamento(departamento);
         return usuarioBadgeMapper.toDTOList(entities);
     }
+    public List<Object[]> findUsuariosConMasBadges() {
+        return usuarioBadgeRepository.findUsuariosConMasBadges();
+    }
 
     public boolean existeAsignacion(Integer idUsuario, Integer idBadge) {
         return usuarioBadgeRepository.existsByUsuario_IdUsuarioAndBadge_IdBadge(idUsuario, idBadge);

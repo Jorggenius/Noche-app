@@ -1,12 +1,13 @@
 package com.schoolDays.noche_app.businessLayer.service.impl;
 
-import com.schoolDays.noche_app.businessLayer.ModuloDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ModuloDTO;
 import com.schoolDays.noche_app.businessLayer.service.CursoService;
 import com.schoolDays.noche_app.businessLayer.service.ModuloService;
 import com.schoolDays.noche_app.persistenceLayer.dao.ModuloDAO;
 import com.schoolDays.noche_app.persistenceLayer.entity.ModuloEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -174,4 +175,22 @@ public class ModuloServiceImpl implements ModuloService {
             throw new IllegalArgumentException("El curso es obligatorio");
         }
     }
-            }
+
+    private void validateModuloUpdateData(ModuloDTO moduloDTO) {
+        if (moduloDTO.getTitulo() != null && moduloDTO.getTitulo().trim().isEmpty()) {
+            throw new IllegalArgumentException("El título no puede estar vacío");
+        }
+
+        if (moduloDTO.getTitulo() != null && moduloDTO.getTitulo().length() > 150) {
+            throw new IllegalArgumentException("El título no puede exceder 150 caracteres");
+        }
+
+        if (moduloDTO.getOrden() != null && moduloDTO.getOrden() <= 0) {
+            throw new IllegalArgumentException("El orden debe ser mayor a 0");
+        }
+    }
+}
+
+
+
+

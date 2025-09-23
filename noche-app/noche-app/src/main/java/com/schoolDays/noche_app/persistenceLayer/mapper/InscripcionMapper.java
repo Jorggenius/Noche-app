@@ -1,8 +1,8 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
-import com.schoolDays.noche_app.businessLayer.InscripcionDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.InscripcionEntity;
 import org.mapstruct.*;
+import com.schoolDays.noche_app.businessLayer.dto.InscripcionDTO;
 
 import java.util.List;
 
@@ -12,7 +12,6 @@ import java.util.List;
 )
 public interface InscripcionMapper {
 
-    // --- Entity → DTO ---
     @Mapping(target = "idUsuario", source = "usuario.idUsuario")
     @Mapping(target = "usuarioNombre", source = "usuario.nombre")
     @Mapping(target = "idCurso", source = "curso.idCurso")
@@ -21,14 +20,17 @@ public interface InscripcionMapper {
 
     List<InscripcionDTO> toDTOList(List<InscripcionEntity> entities);
 
-    // --- DTO → Entity ---
     @Mapping(target = "idInscripcion", ignore = true)
     @Mapping(target = "usuario.idUsuario", source = "idUsuario")
     @Mapping(target = "curso.idCurso", source = "idCurso")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     InscripcionEntity toEntity(InscripcionDTO dto);
 
     @Mapping(target = "idInscripcion", ignore = true)
     @Mapping(target = "usuario.idUsuario", source = "idUsuario")
     @Mapping(target = "curso.idCurso", source = "idCurso")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     InscripcionEntity updateEntityFromDTO(InscripcionDTO inscripcionDTO, @MappingTarget InscripcionEntity existingEntity);
 }

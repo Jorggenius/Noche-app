@@ -1,13 +1,14 @@
 package com.schoolDays.noche_app.businessLayer.service.impl;
 
-import com.schoolDays.noche_app.businessLayer.EvaluacionDTO;
+import com.schoolDays.noche_app.businessLayer.dto.EvaluacionDTO;
 import com.schoolDays.noche_app.businessLayer.service.EvaluacionService;
 import com.schoolDays.noche_app.businessLayer.service.ModuloService;
 import com.schoolDays.noche_app.persistenceLayer.dao.EvaluacionDAO;
-import jakarta.transaction.Transactional;
+import com.schoolDays.noche_app.persistenceLayer.entity.EvaluacionEntity; // ESTE IMPORT FALTABA
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -150,7 +151,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
             throw new IllegalArgumentException("El tipo de evaluación es obligatorio");
         }
 
-        if (evaluacionDTO.getPuntaje() == null || evaluacionDTO.getPuntaje().compareTo(BigDecimal.ZERO) <= 0) {
+        if (evaluacionDTO.getPuntajeMax() == null || evaluacionDTO.getPuntajeMax().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("El puntaje máximo debe ser mayor a cero");
         }
 
@@ -164,7 +165,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
             throw new IllegalArgumentException("El título no puede estar vacío");
         }
 
-        if (evaluacionDTO.getPuntaje() != null && evaluacionDTO.getPuntaje().compareTo(BigDecimal.ZERO) <= 0) {
+        if (evaluacionDTO.getPuntajeMax() != null && evaluacionDTO.getPuntajeMax().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("El puntaje máximo debe ser mayor a cero");
         }
     }

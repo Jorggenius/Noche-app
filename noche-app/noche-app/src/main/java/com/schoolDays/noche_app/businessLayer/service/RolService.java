@@ -1,8 +1,7 @@
 package com.schoolDays.noche_app.businessLayer.service;
 
-import com.schoolDays.noche_app.businessLayer.RolDTO;
-
 import java.util.List;
+import com.schoolDays.noche_app.businessLayer.dto.RolDTO;
 
 public interface RolService {
 

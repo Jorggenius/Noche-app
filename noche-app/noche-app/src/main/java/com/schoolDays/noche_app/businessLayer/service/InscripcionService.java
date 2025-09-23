@@ -1,7 +1,7 @@
 package com.schoolDays.noche_app.businessLayer.service;
 
-import com.schoolDays.noche_app.businessLayer.InscripcionDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.InscripcionEntity;
+import com.schoolDays.noche_app.businessLayer.dto.InscripcionDTO;
 
 import java.math.BigDecimal;
 import java.util.List;

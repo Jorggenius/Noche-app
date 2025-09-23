@@ -1,9 +1,7 @@
 package com.schoolDays.noche_app.businessLayer.service;
 
-import com.schoolDays.noche_app.businessLayer.CertificadoDTO;
-
 import java.util.List;
-
+import com.schoolDays.noche_app.businessLayer.dto.CertificadoDTO;
 public interface CertificadoService {
 
     /**

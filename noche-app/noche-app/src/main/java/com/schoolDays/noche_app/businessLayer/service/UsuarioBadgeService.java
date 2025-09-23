@@ -1,8 +1,7 @@
 package com.schoolDays.noche_app.businessLayer.service;
 
-import com.schoolDays.noche_app.businessLayer.UsuarioBadgeDTO;
-
 import java.util.List;
+import com.schoolDays.noche_app.businessLayer.dto.UsuarioBadgeDTO;
 
 public interface UsuarioBadgeService {
 
@@ -74,4 +73,9 @@ public interface UsuarioBadgeService {
      * Obtener conteo por badge
      */
     long getUsuariosCountByBadge(Integer idBadge);
+
+
+
+
+    void procesarBadgesAutomaticos(Integer idUsuario);
 }

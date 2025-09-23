@@ -1,14 +1,10 @@
-package com.schoolDays.noche_app.businessLayer;
+package com.schoolDays.noche_app.businessLayer.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO único para usuarios del sistema
- * Usado para crear, leer y actualizar usuarios
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,11 +28,12 @@ public class UsuarioDTO {
             maxLength = 100)
     private String apellido;
 
+    // CORREGIDO: email → correo
     @Schema(description = "Correo electrónico del usuario",
             example = "carlos.perez@empresa.com",
             required = true,
             maxLength = 150)
-    private String email;
+    private String correo;
 
     @Schema(description = "Contraseña del usuario",
             example = "password123",

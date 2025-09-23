@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.schoolDays'
 version = '0.0.1-SNAPSHOT'
-description = 'Projecto to apps empresariales'
+description = 'Proyecto to apps empresariales'
 
 java {
     toolchain {
@@ -19,29 +19,45 @@ repositories {
 }
 
 dependencies {
-    // Spring Boot
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // Spring Boot Core
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // OpenAPI / Swagger
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    // OpenAPI / Swagger - VERSIÓN CORREGIDA
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
+    // Base de datos - SOLO UNA DEPENDENCIA
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // MapStruct
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
-    // MariaDB Driver ✅
-    implementation 'com.mysql:mysql-connector-j:8.4.0'
-    implementation 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
+    // IMPORTANTE: Binding para Lombok + MapStruct
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+    // JWT (agregar cuando necesites autenticación)
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
     // Tests
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// CONFIGURACIÓN IMPORTANTE PARA MAPSTRUCT + LOMBOK
+tasks.withType(JavaCompile) {
+    options.annotationProcessorPath = configurations.annotationProcessor
 }

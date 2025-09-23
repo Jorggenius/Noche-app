@@ -8,16 +8,13 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-/**
- * Entidad que representa la relación muchos a muchos entre usuarios y badges
- */
 @Entity
-@Table(name = "usuario_badge")
+@Table(name = "UsuarioBadge")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioBadgeEntity {
+public class UsuarioBadgeEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,10 +24,10 @@ public class UsuarioBadgeEntity {
     private LocalDate fechaOtorgado = LocalDate.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_idusuario", nullable = false)
+    @JoinColumn(name = "idUsuario", nullable = false) // CORREGIDO: era 'usuario_idusuario'
     private UsuarioEntity usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "badge_idbadge", nullable = false)
+    @JoinColumn(name = "idBadge", nullable = false) // CORREGIDO: era 'badge_idbadge'
     private BadgeEntity badge;
 }

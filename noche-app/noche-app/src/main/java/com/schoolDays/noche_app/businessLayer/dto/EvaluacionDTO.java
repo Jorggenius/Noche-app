@@ -1,4 +1,4 @@
-package com.schoolDays.noche_app.businessLayer;
+package com.schoolDays.noche_app.businessLayer.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -7,10 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-/**
- * DTO único para evaluaciones
- * Usado para crear, leer y actualizar evaluaciones
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,11 +35,12 @@ public class EvaluacionDTO {
             allowableValues = {"MCQ", "ABIERTA", "MIXTA"})
     private String tipo;
 
+    // CORREGIDO: puntaje → puntajeMax
     @Schema(description = "Puntaje máximo",
             example = "100.00",
             required = true,
             minimum = "0.01")
-    private BigDecimal puntaje;
+    private BigDecimal puntajeMax;
 
     @Schema(description = "ID del módulo",
             example = "1",

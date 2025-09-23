@@ -9,16 +9,13 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Entidad que representa los cursos
- */
 @Entity
-@Table(name = "curso")
+@Table(name = "Curso")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CursoEntity {
+public class CursoEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,11 +24,11 @@ public class CursoEntity {
     @Column(nullable = false, length = 150)
     private String titulo;
 
-    @Column(length = 500)
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
     @Column(nullable = false)
-    private Integer duracion; // duración en horas
+    private Integer duracionEstimada;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -47,16 +44,16 @@ public class CursoEntity {
     @JoinColumn(name = "creadoPor", nullable = false)
     private UsuarioEntity creadoPor;
 
-    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ModuloEntity> modulos;
 
-    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<InscripcionEntity> inscripciones;
 
-    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CertificadoEntity> certificados;
 
     public enum Nivel {
-        BASICO, INTERMEDIO, AVANZADO
+        BASICO, INTERMEDIO, AVANZADO // ✅ CORREGIDO para coincidir con BD
     }
 }

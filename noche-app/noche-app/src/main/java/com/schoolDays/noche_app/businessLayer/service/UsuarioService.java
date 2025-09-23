@@ -1,8 +1,7 @@
 package com.schoolDays.noche_app.businessLayer.service;
 
-import com.schoolDays.noche_app.businessLayer.UsuarioDTO;
-
 import java.util.List;
+import com.schoolDays.noche_app.businessLayer.dto.UsuarioDTO;
 
 public interface UsuarioService {
 
@@ -10,7 +9,7 @@ public interface UsuarioService {
      * Crear un nuevo usuario
      *
      * VALIDACIONES:
-     * - Email único
+     * - Correo único
      * - Rol debe existir
      * - Contraseña debe cumplir políticas
      */
@@ -41,9 +40,10 @@ public interface UsuarioService {
     void deleteUsuario(Integer id);
 
     /**
-     * Buscar usuario por email (para login)
+     * Buscar usuario por correo (para login)
+     * CORREGIDO: email → correo
      */
-    UsuarioDTO getUsuarioByEmail(String email);
+    UsuarioDTO getUsuarioByCorreo(String correo);
 
     /**
      * Buscar usuarios por nombre o apellido
@@ -66,9 +66,10 @@ public interface UsuarioService {
     List<UsuarioDTO> getEstudiantes();
 
     /**
-     * Verificar si email está disponible
+     * Verificar si correo está disponible
+     * CORREGIDO: email → correo
      */
-    boolean isEmailAvailable(String email);
+    boolean isCorreoAvailable(String correo);
 
     /**
      * Cambiar contraseña
@@ -84,4 +85,19 @@ public interface UsuarioService {
      * Obtener total de usuarios
      */
     long getTotalUsersCount();
+
+    /**
+     * Activar/desactivar usuario
+     */
+    UsuarioDTO toggleUsuarioActivo(Integer id);
+
+    /**
+     * Buscar usuarios por rol
+     */
+    List<UsuarioDTO> getUsuariosByRol(Integer idRol);
+
+    /**
+     * Verificar credenciales de login
+     */
+    boolean verificarCredenciales(String correo, String contrasena);
 }

@@ -1,12 +1,12 @@
 package com.schoolDays.noche_app.businessLayer.service.impl;
 
-import com.schoolDays.noche_app.businessLayer.RolDTO;
+import com.schoolDays.noche_app.businessLayer.dto.RolDTO;
 import com.schoolDays.noche_app.businessLayer.service.RolService;
 import com.schoolDays.noche_app.persistenceLayer.dao.RolDAO;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

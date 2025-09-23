@@ -1,7 +1,5 @@
 package com.schoolDays.noche_app.businessLayer.service.impl;
 
-import com.schoolDays.noche_app.businessLayer.CertificadoDTO;
-import com.schoolDays.noche_app.businessLayer.InscripcionDTO;
 import com.schoolDays.noche_app.businessLayer.service.CertificadoService;
 import com.schoolDays.noche_app.businessLayer.service.InscripcionService;
 import com.schoolDays.noche_app.persistenceLayer.dao.CertificadoDAO;
@@ -9,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import com.schoolDays.noche_app.businessLayer.dto.CertificadoDTO;
+import com.schoolDays.noche_app.businessLayer.dto.InscripcionDTO;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.schoolDays.noche_app.businessLayer.service;
 
-import com.schoolDays.noche_app.businessLayer.EvaluacionDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.EvaluacionEntity;
+import com.schoolDays.noche_app.businessLayer.dto.EvaluacionDTO;
 
 import java.util.List;
 
