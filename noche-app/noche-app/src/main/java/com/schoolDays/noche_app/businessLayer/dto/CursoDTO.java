@@ -1,4 +1,4 @@
-package com.schoolDays.noche_app.businessLayer;
+package com.schoolDays.noche_app.businessLayer.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -7,10 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-/**
- * DTO único para cursos
- * Usado para crear, leer y actualizar cursos
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,11 +29,12 @@ public class CursoDTO {
             maxLength = 500)
     private String descripcion;
 
+    // CORREGIDO: duracion → duracionEstimada
     @Schema(description = "Duración estimada en horas",
             example = "40",
             required = true,
             minimum = "1")
-    private Integer duracion;
+    private Integer duracionEstimada;
 
     @Schema(description = "Nivel del curso",
             example = "BASICO",

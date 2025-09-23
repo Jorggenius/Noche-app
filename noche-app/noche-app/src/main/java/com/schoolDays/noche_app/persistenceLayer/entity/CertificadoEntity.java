@@ -8,16 +8,13 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-/**
- * Entidad que representa los certificados emitidos
- */
 @Entity
-@Table(name = "certificado")
+@Table(name = "Certificado")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CertificadoEntity {
+public class CertificadoEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,10 +27,10 @@ public class CertificadoEntity {
     private String hash;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_idusuario", nullable = false)
+    @JoinColumn(name = "idUsuario", nullable = false) // CORREGIDO: era 'usuario_idusuario'
     private UsuarioEntity usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "curso_idcurso", nullable = false)
+    @JoinColumn(name = "idCurso", nullable = false) // CORREGIDO: era 'curso_idcurso'
     private CursoEntity curso;
 }

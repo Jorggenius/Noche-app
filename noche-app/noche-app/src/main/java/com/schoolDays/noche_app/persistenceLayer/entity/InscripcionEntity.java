@@ -13,12 +13,12 @@ import java.time.LocalDate;
  * Entidad que representa las inscripciones de usuarios a cursos
  */
 @Entity
-@Table(name = "inscripcion")
+@Table(name = "Inscripcion")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InscripcionEntity {
+public class InscripcionEntity extends BaseEntity { // ✅ AGREGAR extends BaseEntity
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,11 +35,11 @@ public class InscripcionEntity {
     private Estado estado = Estado.INSCRITO;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_idusuario", nullable = false)
+    @JoinColumn(name = "idUsuario", nullable = false) // ✅ CORREGIDO
     private UsuarioEntity usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "curso_idcurso", nullable = false)
+    @JoinColumn(name = "idCurso", nullable = false) // ✅ CORREGIDO
     private CursoEntity curso;
 
     public enum Estado {

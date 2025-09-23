@@ -1,8 +1,8 @@
 package com.schoolDays.noche_app.businessLayer.service;
 
-import com.schoolDays.noche_app.businessLayer.BadgeDTO;
-
 import java.util.List;
+import com.schoolDays.noche_app.businessLayer.dto.BadgeDTO;
+
 
 public interface BadgeService {
 

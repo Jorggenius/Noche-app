@@ -1,15 +1,17 @@
 package com.schoolDays.noche_app.businessLayer.service.impl;
 
-import com.schoolDays.noche_app.businessLayer.BadgeDTO;
 import com.schoolDays.noche_app.businessLayer.service.BadgeService;
-import com.schoolDays.noche_app.businessLayer.service.CertificadoService;
-import com.schoolDays.noche_app.businessLayer.service.InscripcionService;
 import com.schoolDays.noche_app.persistenceLayer.dao.BadgeDAO;
+import com.schoolDays.noche_app.persistenceLayer.dao.InscripcionDAO;
+import com.schoolDays.noche_app.persistenceLayer.dao.UsuarioBadgeDAO;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import com.schoolDays.noche_app.businessLayer.dto.BadgeDTO;
+import com.schoolDays.noche_app.businessLayer.dto.UsuarioBadgeDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -19,8 +21,8 @@ import java.util.List;
 public class BadgeServiceImpl implements BadgeService {
 
     private final BadgeDAO badgeDAO;
-    private final InscripcionService inscripcionService;
-    private final CertificadoService certificadoService;
+    private final InscripcionDAO inscripcionDAO;
+    private final UsuarioBadgeDAO usuarioBadgeDAO;
 
     @Override
     public BadgeDTO createBadge(BadgeDTO badgeDTO) {
@@ -111,18 +113,17 @@ public class BadgeServiceImpl implements BadgeService {
     public void procesarBadgesAutomaticos(Integer idUsuario) {
         log.info("Procesando badges automáticos para usuario ID: {}", idUsuario);
 
-        // Badge "Primer Paso" - Completar primer curso
-        long cursosCompletados = inscripcionService.getCursosCompletadosByUsuario(idUsuario);
+        // Usar DAO directamente - NO servicios
+        long cursosCompletados = inscripcionDAO.countCursosCompletadosByUsuario(idUsuario);
+
         if (cursosCompletados == 1) {
             otorgarBadgeSiExiste(idUsuario, "Primer Paso");
         }
 
-        // Badge "Dedicado" - Completar 5 cursos
         if (cursosCompletados >= 5) {
             otorgarBadgeSiExiste(idUsuario, "Dedicado");
         }
 
-        // Badge "Experto" - Completar 10 cursos
         if (cursosCompletados >= 10) {
             otorgarBadgeSiExiste(idUsuario, "Experto");
         }
@@ -135,14 +136,13 @@ public class BadgeServiceImpl implements BadgeService {
     public boolean cumpleCriterio(Integer idUsuario, Integer idBadge) {
         BadgeDTO badge = getBadgeById(idBadge);
 
-        // Implementar lógica específica según el criterio del badge
         switch (badge.getNombre()) {
             case "Primer Paso":
-                return inscripcionService.getCursosCompletadosByUsuario(idUsuario) >= 1;
+                return inscripcionDAO.countCursosCompletadosByUsuario(idUsuario) >= 1;
             case "Dedicado":
-                return inscripcionService.getCursosCompletadosByUsuario(idUsuario) >= 5;
+                return inscripcionDAO.countCursosCompletadosByUsuario(idUsuario) >= 5;
             case "Experto":
-                return inscripcionService.getCursosCompletadosByUsuario(idUsuario) >= 10;
+                return inscripcionDAO.countCursosCompletadosByUsuario(idUsuario) >= 10;
             default:
                 return false;
         }
@@ -154,8 +154,13 @@ public class BadgeServiceImpl implements BadgeService {
                     .findFirst()
                     .orElse(null);
 
-            if (badge != null) {
-                // Aquí llamarías al UsuarioBadgeService para otorgar el badge
+            if (badge != null && !usuarioBadgeDAO.existeAsignacion(idUsuario, badge.getIdBadge())) {
+                UsuarioBadgeDTO usuarioBadgeDTO = new UsuarioBadgeDTO();
+                usuarioBadgeDTO.setIdUsuario(idUsuario);
+                usuarioBadgeDTO.setIdBadge(badge.getIdBadge());
+                usuarioBadgeDTO.setFechaOtorgado(LocalDate.now());
+
+                usuarioBadgeDAO.save(usuarioBadgeDTO);
                 log.info("Badge {} otorgado automáticamente al usuario {}", nombreBadge, idUsuario);
             }
         } catch (Exception e) {

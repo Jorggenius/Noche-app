@@ -9,16 +9,13 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * Entidad que representa las evaluaciones
- */
 @Entity
-@Table(name = "evaluacion")
+@Table(name = "Evaluacion")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EvaluacionEntity {
+public class EvaluacionEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +24,7 @@ public class EvaluacionEntity {
     @Column(nullable = false, length = 150)
     private String titulo;
 
-    @Column(length = 500)
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
     @Enumerated(EnumType.STRING)
@@ -35,14 +32,17 @@ public class EvaluacionEntity {
     private TipoEvaluacion tipo;
 
     @Column(nullable = false, precision = 5, scale = 2)
-    private BigDecimal puntaje;
+    private BigDecimal puntajeMax; // CORREGIDO: era 'puntaje'
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idModulo", nullable = false)
     private ModuloEntity modulo;
 
-    @OneToMany(mappedBy = "evaluacion", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "evaluacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PreguntaEntity> preguntas;
+
+    @OneToMany(mappedBy = "evaluacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ResultadoEntity> resultados;
 
     public enum TipoEvaluacion {
         MCQ, ABIERTA, MIXTA

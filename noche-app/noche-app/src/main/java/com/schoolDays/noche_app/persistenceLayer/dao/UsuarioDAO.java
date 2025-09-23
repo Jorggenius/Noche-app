@@ -50,13 +50,14 @@ public class UsuarioDAO {
         return false;
     }
 
-    public Optional<UsuarioDTO> findByEmail(String email) {
-        return usuarioRepository.findByEmail(email)
+    // CORREGIDO: email → correo
+    public Optional<UsuarioDTO> findByCorreo(String correo) {
+        return usuarioRepository.findByCorreo(correo)
                 .map(usuarioMapper::toDTO);
     }
 
-    public boolean existsByEmail(String email) {
-        return usuarioRepository.existsByEmail(email);
+    public boolean existsByCorreo(String correo) {
+        return usuarioRepository.existsByCorreo(correo);
     }
 
     public List<UsuarioDTO> findByRol(Integer idRol) {

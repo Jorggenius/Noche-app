@@ -1,10 +1,8 @@
 package com.schoolDays.noche_app.persistenceLayer.mapper;
 
-import com.schoolDays.noche_app.businessLayer.RolDTO;
 import com.schoolDays.noche_app.persistenceLayer.entity.RolEntity;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.mapstruct.*;
+import com.schoolDays.noche_app.businessLayer.dto.RolDTO;
 
 import java.util.List;
 
@@ -12,21 +10,20 @@ import java.util.List;
         componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.WARN
 )
-
 public interface RolMapper {
 
-    // Convierte RolEntity → RolDTO
     RolDTO toDTO(RolEntity entity);
 
-    // Convierte lista de entidades → lista de DTOs
     List<RolDTO> toDTOList(List<RolEntity> entities);
 
-    // Convierte RolDTO → RolEntity (crear)
-    @Mapping(target = "usuarios", ignore = true) // para evitar ciclos
+    @Mapping(target = "usuarios", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     RolEntity toEntity(RolDTO dto);
 
-    // Actualiza RolEntity existente con datos de RolDTO
     @Mapping(target = "usuarios", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(RolDTO dto, @MappingTarget RolEntity entity);
 }

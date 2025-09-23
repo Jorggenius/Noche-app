@@ -8,16 +8,13 @@ import lombok.Setter;
 
 import java.util.List;
 
-/**
- * Entidad que representa los roles del sistema
- */
 @Entity
-@Table(name = "rol")
+@Table(name = "Rol")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RolEntity {
+public class RolEntity extends BaseEntity { // AGREGADO: extends BaseEntity
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +23,9 @@ public class RolEntity {
     @Column(nullable = false, unique = true, length = 50)
     private String nombreRol;
 
-    @Column(length = 255)
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UsuarioEntity> usuarios;
 }

@@ -12,12 +12,12 @@ import java.util.List;
  * Entidad que representa los módulos de un curso
  */
 @Entity
-@Table(name = "modulo")
+@Table(name = "Modulo")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ModuloEntity {
+public class ModuloEntity extends BaseEntity { // ✅ AGREGAR extends BaseEntity
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

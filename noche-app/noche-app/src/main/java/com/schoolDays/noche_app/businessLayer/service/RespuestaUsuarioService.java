@@ -1,8 +1,8 @@
 package com.schoolDays.noche_app.businessLayer.service;
-import com.schoolDays.noche_app.businessLayer.RespuestaUsuarioDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
+import com.schoolDays.noche_app.businessLayer.dto.RespuestaUsuarioDTO;
 
 public interface RespuestaUsuarioService {
 

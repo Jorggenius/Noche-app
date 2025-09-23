@@ -1,4 +1,4 @@
-package com.schoolDays.noche_app.businessLayer;
+package com.schoolDays.noche_app.businessLayer.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

@@ -1,16 +1,16 @@
 package com.schoolDays.noche_app.businessLayer.service.impl;
 
 
-import com.schoolDays.noche_app.businessLayer.CursoDTO;
-import com.schoolDays.noche_app.businessLayer.UsuarioDTO;
+import com.schoolDays.noche_app.businessLayer.dto.CursoDTO;
+import com.schoolDays.noche_app.businessLayer.dto.UsuarioDTO;
 import com.schoolDays.noche_app.businessLayer.service.CursoService;
 import com.schoolDays.noche_app.businessLayer.service.UsuarioService;
 import com.schoolDays.noche_app.persistenceLayer.dao.CursoDAO;
 import com.schoolDays.noche_app.persistenceLayer.entity.CursoEntity;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -168,7 +168,7 @@ public class CursoServiceImpl implements CursoService {
             throw new IllegalArgumentException("El título no puede exceder 150 caracteres");
         }
 
-        if (cursoDTO.getDuracion() == null || cursoDTO.getDuracion() <= 0) {
+        if (cursoDTO.getDuracionEstimada() == null || cursoDTO.getDuracionEstimada() <= 0) {
             throw new IllegalArgumentException("La duración debe ser mayor a 0 horas");
         }
 
@@ -190,8 +190,10 @@ public class CursoServiceImpl implements CursoService {
             throw new IllegalArgumentException("El título no puede exceder 150 caracteres");
         }
 
-        if (cursoDTO.getDuracion() != null && cursoDTO.getDuracion() <= 0) {
+        if (cursoDTO.getDuracionEstimada() != null && cursoDTO.getDuracionEstimada() <= 0) {
             throw new IllegalArgumentException("La duración debe ser mayor a 0 horas");
         }
     }
 }
+
+

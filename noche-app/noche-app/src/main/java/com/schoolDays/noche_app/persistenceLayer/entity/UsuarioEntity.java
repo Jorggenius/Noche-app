@@ -8,16 +8,13 @@ import lombok.Setter;
 
 import java.util.List;
 
-/**
- * Entidad que representa los usuarios del sistema
- */
 @Entity
-@Table(name = "usuario")
+@Table(name = "Usuario")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioEntity {
+public class UsuarioEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,9 +27,9 @@ public class UsuarioEntity {
     private String apellido;
 
     @Column(nullable = false, unique = true, length = 150)
-    private String email;
+    private String correo; // CORREGIDO: era 'email'
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String contrasena;
 
     @Column(length = 100)
@@ -42,15 +39,21 @@ public class UsuarioEntity {
     @JoinColumn(name = "idRol", nullable = false)
     private RolEntity rol;
 
-    @OneToMany(mappedBy = "creadoPor", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "creadoPor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CursoEntity> cursosCreados;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<InscripcionEntity> inscripciones;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CertificadoEntity> certificados;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UsuarioBadgeEntity> badges;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ResultadoEntity> resultados;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<RespuestaUsuarioEntity> respuestasUsuario;
 }

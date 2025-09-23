@@ -12,19 +12,18 @@ import java.util.List;
  * Entidad unificada para todas las preguntas
  */
 @Entity
-@Table(name = "pregunta")
+@Table(name = "Pregunta")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PreguntaEntity {
+public class PreguntaEntity extends BaseEntity { // ✅ AGREGAR extends BaseEntity
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idPregunta;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String enunciado;
 
     @Enumerated(EnumType.STRING)
@@ -35,7 +34,7 @@ public class PreguntaEntity {
     private Integer orden = 1;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "evaluacion_idevaluacion", nullable = false)
+    @JoinColumn(name = "idEvaluacion", nullable = false) // ✅ CORREGIDO
     private EvaluacionEntity evaluacion;
 
     @OneToMany(mappedBy = "pregunta", cascade = CascadeType.ALL)

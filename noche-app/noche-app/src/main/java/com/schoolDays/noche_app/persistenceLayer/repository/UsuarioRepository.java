@@ -1,8 +1,6 @@
 package com.schoolDays.noche_app.persistenceLayer.repository;
 
 import com.schoolDays.noche_app.persistenceLayer.entity.UsuarioEntity;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,19 +10,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer> {
 
-    Optional<UsuarioEntity> findByEmail(String email);
-
-    boolean existsByEmail(String email);
+    // CORREGIDO: email → correo
+    Optional<UsuarioEntity> findByCorreo(String correo);
+    boolean existsByCorreo(String correo);
 
     List<UsuarioEntity> findByRol_IdRol(Integer idRol);
-
     List<UsuarioEntity> findByDepartamento(String departamento);
-
     List<UsuarioEntity> findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCase(String nombre, String apellido);
-
     List<UsuarioEntity> findByRol_IdRolAndDepartamento(Integer idRol, String departamento);
 
     @Query("SELECT COUNT(u) FROM UsuarioEntity u WHERE u.rol.idRol = :rolId")

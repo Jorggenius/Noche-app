@@ -1,12 +1,14 @@
 package com.schoolDays.noche_app.businessLayer.service.impl;
 
-import com.schoolDays.noche_app.businessLayer.PreguntaDTO;
-import com.schoolDays.noche_app.businessLayer.service.EvaluacionService;
+import com.schoolDays.noche_app.businessLayer.dto.PreguntaDTO;
 import com.schoolDays.noche_app.businessLayer.service.PreguntaService;
-import jakarta.transaction.Transactional;
+import com.schoolDays.noche_app.businessLayer.service.EvaluacionService;
+import com.schoolDays.noche_app.persistenceLayer.dao.PreguntaDAO;
+import com.schoolDays.noche_app.persistenceLayer.entity.PreguntaEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

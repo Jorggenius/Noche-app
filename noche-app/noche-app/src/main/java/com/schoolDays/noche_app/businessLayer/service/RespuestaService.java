@@ -1,6 +1,6 @@
 package com.schoolDays.noche_app.businessLayer.service;
 
-import com.schoolDays.noche_app.businessLayer.RespuestaDTO;
+import com.schoolDays.noche_app.businessLayer.dto.RespuestaDTO;
 
 import java.util.List;
 

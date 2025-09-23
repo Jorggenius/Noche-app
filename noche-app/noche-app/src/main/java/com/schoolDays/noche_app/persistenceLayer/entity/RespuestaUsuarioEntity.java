@@ -13,12 +13,12 @@ import java.time.LocalDate;
  * Entidad que representa las respuestas de los usuarios
  */
 @Entity
-@Table(name = "respuesta_usuario")
+@Table(name = "RespuestaUsuario")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RespuestaUsuarioEntity {
+public class RespuestaUsuarioEntity extends BaseEntity { // ✅ AGREGAR extends BaseEntity
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,22 +32,22 @@ public class RespuestaUsuarioEntity {
 
     // Para preguntas MCQ
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idRespuesta")
+    @JoinColumn(name = "idRespuesta") // ✅ CORREGIDO
     private RespuestaEntity respuestaSeleccionada;
 
     // Para preguntas abiertas
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String respuestaTexto;
 
     @Column
     private Boolean correcta;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "evaluacion_idevaluacion", nullable = false)
+    @JoinColumn(name = "idEvaluacion", nullable = false) // ✅ CORREGIDO
     private EvaluacionEntity evaluacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_idusuario", nullable = false)
+    @JoinColumn(name = "idUsuario", nullable = false) // ✅ CORREGIDO
     private UsuarioEntity usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)

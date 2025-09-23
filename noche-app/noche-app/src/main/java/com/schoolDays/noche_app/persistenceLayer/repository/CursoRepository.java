@@ -1,8 +1,6 @@
 package com.schoolDays.noche_app.persistenceLayer.repository;
 
 import com.schoolDays.noche_app.persistenceLayer.entity.CursoEntity;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,18 +10,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-
 public interface CursoRepository extends JpaRepository<CursoEntity, Integer> {
 
     List<CursoEntity> findByCreadoPor_IdUsuario(Integer idUsuario);
-
     List<CursoEntity> findByNivel(CursoEntity.Nivel nivel);
-
     List<CursoEntity> findByTituloContainingIgnoreCase(String titulo);
-
     List<CursoEntity> findByFechaCreacionBetween(LocalDate fechaInicio, LocalDate fechaFin);
 
-    List<CursoEntity> findByDuracionLessThanEqual(Integer duracionMaxima);
+    // CORREGIDO: duracion → duracionEstimada
+    List<CursoEntity> findByDuracionEstimadaLessThanEqual(Integer duracionMaxima);
 
     List<CursoEntity> findAllByOrderByFechaCreacionDesc();
 
@@ -37,6 +32,5 @@ public interface CursoRepository extends JpaRepository<CursoEntity, Integer> {
     List<CursoEntity> findCursosConModulos();
 
     List<CursoEntity> findByCreadoPor_IdUsuarioOrderByFechaCreacionDesc(Integer idUsuario);
-
     List<CursoEntity> findByNivelOrderByTituloAsc(CursoEntity.Nivel nivel);
 }

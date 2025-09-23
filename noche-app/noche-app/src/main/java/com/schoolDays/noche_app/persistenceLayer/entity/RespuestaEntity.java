@@ -10,19 +10,18 @@ import lombok.Setter;
  * Entidad que representa las opciones de respuesta para preguntas MCQ
  */
 @Entity
-@Table(name = "respuesta")
+@Table(name = "Respuesta")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RespuestaEntity {
+public class RespuestaEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idRespuesta;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String contenido;
 
     @Column(nullable = false)

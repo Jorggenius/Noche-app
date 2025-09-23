@@ -8,16 +8,13 @@ import lombok.Setter;
 
 import java.util.List;
 
-/**
- * Entidad que representa los badges del sistema
- */
 @Entity
-@Table(name = "badge")
+@Table(name = "Badge")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BadgeEntity {
+public class BadgeEntity extends BaseEntity { // AGREGADO: extends BaseEntity
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,12 +23,12 @@ public class BadgeEntity {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String criterio;
 
     @Column(length = 255)
     private String icono;
 
-    @OneToMany(mappedBy = "badge", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "badge", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UsuarioBadgeEntity> usuariosBadges;
 }
