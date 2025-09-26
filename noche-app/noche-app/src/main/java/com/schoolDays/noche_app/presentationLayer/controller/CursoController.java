@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.presentationLayer.controller;
 
 import com.schoolDays.noche_app.businessLayer.dto.CursoDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ErrorResponseData;
 import com.schoolDays.noche_app.businessLayer.service.CursoService;
 import com.schoolDays.noche_app.persistenceLayer.entity.CursoEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -51,7 +53,7 @@ public class CursoController {
                     description = "Usuario sin permisos para crear cursos"
             )
     })
-    public ResponseEntity<CursoDTO> createCurso(
+    public ResponseEntity<?> createCurso(
             @Parameter(description = "Datos del curso a crear", required = true)
             @RequestBody CursoDTO cursoDTO
     ) {
@@ -63,7 +65,17 @@ public class CursoController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdCurso);
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al crear curso: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+
+            ErrorResponseData error = new ErrorResponseData(
+                    LocalDateTime.now(),                      // timestamp
+                    HttpStatus.BAD_REQUEST.value(),           // status (400)
+                    HttpStatus.BAD_REQUEST.getReasonPhrase(), // error ("Bad Request")
+                    e.getMessage()                            // message
+            );
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(error);
         }
     }
 
