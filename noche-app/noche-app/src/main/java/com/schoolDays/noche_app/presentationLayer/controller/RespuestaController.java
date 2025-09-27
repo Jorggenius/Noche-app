@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.presentationLayer.controller;
 
 import com.schoolDays.noche_app.businessLayer.dto.RespuestaDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ErrorResponseData;
 import com.schoolDays.noche_app.businessLayer.service.RespuestaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,10 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/respuestas")
+@RequestMapping("/v1/respuestas")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Respuestas", description = "Gestión de opciones de respuesta para preguntas MCQ")
@@ -25,12 +27,12 @@ public class RespuestaController {
 
     @PostMapping
     @Operation(summary = "Crear opción de respuesta", description = "Crea una opción de respuesta para una pregunta MCQ")
-    public ResponseEntity<RespuestaDTO> createRespuesta(@RequestBody RespuestaDTO respuestaDTO) {
+    public ResponseEntity<?> createRespuesta(@RequestBody RespuestaDTO respuestaDTO) {
         try {
             RespuestaDTO created = respuestaService.createRespuesta(respuestaDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -79,5 +81,15 @@ public class RespuestaController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    private ResponseEntity<ErrorResponseData> createErrorResponse(HttpStatus status, String message) {
+        ErrorResponseData error = new ErrorResponseData(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+        return ResponseEntity.status(status).body(error);
     }
 }

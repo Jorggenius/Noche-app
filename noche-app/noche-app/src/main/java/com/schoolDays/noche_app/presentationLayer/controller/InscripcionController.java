@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.presentationLayer.controller;
 
 import com.schoolDays.noche_app.businessLayer.dto.InscripcionDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ErrorResponseData;
 import com.schoolDays.noche_app.businessLayer.service.InscripcionService;
 import com.schoolDays.noche_app.persistenceLayer.entity.InscripcionEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,10 +18,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/inscripciones")
+@RequestMapping("/v1/inscripciones")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Inscripciones", description = "Gestión de inscripciones a cursos")
@@ -52,11 +54,11 @@ public class InscripcionController {
                     description = "Usuario o curso no encontrado"
             )
     })
-    public ResponseEntity<InscripcionDTO> inscribirUsuario(
+    public ResponseEntity<?> inscribirUsuario(
             @Parameter(description = "Datos de inscripción", required = true)
             @RequestBody InscripcionDTO inscripcionDTO
     ) {
-        log.info("POST /api/v1/inscripciones - Inscribiendo usuario {} al curso {}",
+        log.info("POST /v1/inscripciones - Inscribiendo usuario {} al curso {}",
                 inscripcionDTO.getIdUsuario(), inscripcionDTO.getIdCurso());
 
         try {
@@ -65,10 +67,10 @@ public class InscripcionController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdInscripcion);
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación en inscripción: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (RuntimeException e) {
             log.warn("Error en inscripción: {}", e.getMessage());
-            return ResponseEntity.notFound().build();
+            return createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -81,7 +83,7 @@ public class InscripcionController {
             @Parameter(description = "ID de la inscripción", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.debug("GET /api/v1/inscripciones/{} - Buscando inscripción", id);
+        log.debug("GET /v1/inscripciones/{} - Buscando inscripción", id);
 
         try {
             InscripcionDTO inscripcion = inscripcionService.getInscripcionById(id);
@@ -98,7 +100,7 @@ public class InscripcionController {
             description = "Obtiene lista completa de inscripciones del sistema"
     )
     public ResponseEntity<List<InscripcionDTO>> getAllInscripciones() {
-        log.debug("GET /api/v1/inscripciones - Obteniendo todas las inscripciones");
+        log.debug("GET /v1/inscripciones - Obteniendo todas las inscripciones");
 
         List<InscripcionDTO> inscripciones = inscripcionService.getAllInscripciones();
         log.debug("Se encontraron {} inscripciones", inscripciones.size());
@@ -128,13 +130,13 @@ public class InscripcionController {
                     description = "Inscripción no encontrada"
             )
     })
-    public ResponseEntity<InscripcionDTO> updateProgreso(
+    public ResponseEntity<?> updateProgreso(
             @Parameter(description = "ID de la inscripción", required = true, example = "1")
             @PathVariable Integer id,
             @Parameter(description = "Nuevo progreso (0-100)", required = true, example = "75.5")
             @RequestParam BigDecimal progreso
     ) {
-        log.info("PUT /api/v1/inscripciones/{}/progreso?progreso={}", id, progreso);
+        log.info("PUT /v1/inscripciones/{}/progreso?progreso={}", id, progreso);
 
         try {
             InscripcionDTO updatedInscripcion = inscripcionService.updateProgreso(id, progreso);
@@ -142,10 +144,10 @@ public class InscripcionController {
             return ResponseEntity.ok(updatedInscripcion);
         } catch (IllegalArgumentException e) {
             log.warn("Progreso inválido para inscripción ID {}: {}", id, e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (RuntimeException e) {
             log.warn("Inscripción no encontrada ID: {}", id);
-            return ResponseEntity.notFound().build();
+            return createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -158,7 +160,7 @@ public class InscripcionController {
             @Parameter(description = "ID de la inscripción", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.info("PUT /api/v1/inscripciones/{}/cancelar - Cancelando inscripción", id);
+        log.info("PUT /v1/inscripciones/{}/cancelar - Cancelando inscripción", id);
 
         try {
             inscripcionService.cancelarInscripcion(id);
@@ -179,7 +181,7 @@ public class InscripcionController {
             @Parameter(description = "ID del usuario", required = true, example = "1")
             @PathVariable Integer usuarioId
     ) {
-        log.debug("GET /api/v1/inscripciones/usuario/{} - Inscripciones por usuario", usuarioId);
+        log.debug("GET /v1/inscripciones/usuario/{} - Inscripciones por usuario", usuarioId);
 
         try {
             List<InscripcionDTO> inscripciones = inscripcionService.getInscripcionesByUsuario(usuarioId);
@@ -198,7 +200,7 @@ public class InscripcionController {
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer cursoId
     ) {
-        log.debug("GET /api/v1/inscripciones/curso/{} - Inscripciones por curso", cursoId);
+        log.debug("GET /v1/inscripciones/curso/{} - Inscripciones por curso", cursoId);
 
         try {
             List<InscripcionDTO> inscripciones = inscripcionService.getInscripcionesByCurso(cursoId);
@@ -213,18 +215,18 @@ public class InscripcionController {
             summary = "Inscripciones por estado",
             description = "Obtiene inscripciones filtradas por estado"
     )
-    public ResponseEntity<List<InscripcionDTO>> getInscripcionesByEstado(
+    public ResponseEntity<?> getInscripcionesByEstado(
             @Parameter(description = "Estado de inscripción", required = true, example = "EN_PROGRESO")
             @PathVariable String estado
     ) {
-        log.debug("GET /api/v1/inscripciones/estado/{} - Inscripciones por estado", estado);
+        log.debug("GET /v1/inscripciones/estado/{} - Inscripciones por estado", estado);
 
         try {
             InscripcionEntity.Estado estadoEnum = InscripcionEntity.Estado.valueOf(estado.toUpperCase());
             List<InscripcionDTO> inscripciones = inscripcionService.getInscripcionesByEstado(estadoEnum);
             return ResponseEntity.ok(inscripciones);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, "Estado inválido: " + estado);
         }
     }
 
@@ -234,7 +236,7 @@ public class InscripcionController {
             description = "Obtiene todas las inscripciones que están en progreso"
     )
     public ResponseEntity<List<InscripcionDTO>> getInscripcionesEnProgreso() {
-        log.debug("GET /api/v1/inscripciones/en-progreso - Inscripciones en progreso");
+        log.debug("GET /v1/inscripciones/en-progreso - Inscripciones en progreso");
 
         List<InscripcionDTO> inscripciones = inscripcionService.getInscripcionesEnProgreso();
         return ResponseEntity.ok(inscripciones);
@@ -249,7 +251,7 @@ public class InscripcionController {
             @Parameter(description = "ID de la inscripción", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.info("PUT /api/v1/inscripciones/{}/completar - Completando curso", id);
+        log.info("PUT /v1/inscripciones/{}/completar - Completando curso", id);
 
         try {
             InscripcionDTO completedInscripcion = inscripcionService.completarCurso(id);
@@ -259,5 +261,15 @@ public class InscripcionController {
             log.warn("Error al completar curso para inscripción ID: {}", id);
             return ResponseEntity.notFound().build();
         }
+    }
+
+    private ResponseEntity<ErrorResponseData> createErrorResponse(HttpStatus status, String message) {
+        ErrorResponseData error = new ErrorResponseData(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+        return ResponseEntity.status(status).body(error);
     }
 }

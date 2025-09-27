@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.presentationLayer.controller;
 
 import com.schoolDays.noche_app.businessLayer.dto.RolDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ErrorResponseData;
 import com.schoolDays.noche_app.businessLayer.service.RolService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,10 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/roles")
+@RequestMapping("/v1/roles")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Roles", description = "Gestión de roles y permisos del sistema")
@@ -46,11 +48,11 @@ public class RolController {
                     description = "Datos inválidos o nombre duplicado"
             )
     })
-    public ResponseEntity<RolDTO> createRol(
+    public ResponseEntity<?> createRol(
             @Parameter(description = "Datos del rol a crear", required = true)
             @RequestBody RolDTO rolDTO
     ) {
-        log.info("POST /api/v1/roles - Creando rol: {}", rolDTO.getNombreRol());
+        log.info("POST /v1/roles - Creando rol: {}", rolDTO.getNombreRol());
 
         try {
             RolDTO createdRol = rolService.createRol(rolDTO);
@@ -58,7 +60,7 @@ public class RolController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdRol);
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al crear rol: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -71,7 +73,7 @@ public class RolController {
             @Parameter(description = "ID del rol", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.debug("GET /api/v1/roles/{} - Buscando rol", id);
+        log.debug("GET /v1/roles/{} - Buscando rol", id);
 
         try {
             RolDTO rol = rolService.getRolById(id);
@@ -88,7 +90,7 @@ public class RolController {
             description = "Obtiene lista completa de roles del sistema"
     )
     public ResponseEntity<List<RolDTO>> getAllRoles() {
-        log.debug("GET /api/v1/roles - Obteniendo todos los roles");
+        log.debug("GET /v1/roles - Obteniendo todos los roles");
 
         List<RolDTO> roles = rolService.getAllRoles();
         log.debug("Se encontraron {} roles", roles.size());
@@ -106,7 +108,7 @@ public class RolController {
             @Parameter(description = "Datos a actualizar", required = true)
             @RequestBody RolDTO rolDTO
     ) {
-        log.info("PUT /api/v1/roles/{} - Actualizando rol", id);
+        log.info("PUT /v1/roles/{} - Actualizando rol", id);
 
         try {
             RolDTO updatedRol = rolService.updateRol(id, rolDTO);
@@ -129,7 +131,7 @@ public class RolController {
             @Parameter(description = "ID del rol", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.info("DELETE /api/v1/roles/{} - Eliminando rol", id);
+        log.info("DELETE /v1/roles/{} - Eliminando rol", id);
 
         try {
             rolService.deleteRol(id);
@@ -152,7 +154,7 @@ public class RolController {
             @Parameter(description = "Nombre del rol", required = true, example = "ADMIN")
             @PathVariable String nombreRol
     ) {
-        log.debug("GET /api/v1/roles/nombre/{} - Buscando rol por nombre", nombreRol);
+        log.debug("GET /v1/roles/nombre/{} - Buscando rol por nombre", nombreRol);
 
         try {
             RolDTO rol = rolService.getRolByNombre(nombreRol);
@@ -172,7 +174,7 @@ public class RolController {
             @Parameter(description = "Nombre a verificar", required = true, example = "NUEVO_ROL")
             @PathVariable String nombreRol
     ) {
-        log.debug("GET /api/v1/roles/nombre/{}/disponible - Verificando disponibilidad", nombreRol);
+        log.debug("GET /v1/roles/nombre/{}/disponible - Verificando disponibilidad", nombreRol);
 
         boolean disponible = !rolService.isNombreRolTaken(nombreRol);
         return ResponseEntity.ok(disponible);
@@ -184,9 +186,19 @@ public class RolController {
             description = "Obtiene el número total de roles en el sistema"
     )
     public ResponseEntity<Long> getTotalRolesCount() {
-        log.debug("GET /api/v1/roles/count - Conteo de roles");
+        log.debug("GET /v1/roles/count - Conteo de roles");
 
         long count = rolService.getTotalRolesCount();
         return ResponseEntity.ok(count);
+    }
+
+    private ResponseEntity<ErrorResponseData> createErrorResponse(HttpStatus status, String message) {
+        ErrorResponseData error = new ErrorResponseData(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+        return ResponseEntity.status(status).body(error);
     }
 }

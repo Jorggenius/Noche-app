@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.presentationLayer.controller;
 
 import com.schoolDays.noche_app.businessLayer.dto.ResultadoDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ErrorResponseData;
 import com.schoolDays.noche_app.businessLayer.service.ResultadoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,10 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/resultados")
+@RequestMapping("/v1/resultados")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Resultados", description = "Gestión de resultados de evaluaciones")
@@ -26,25 +28,25 @@ public class ResultadoController {
 
     @PostMapping
     @Operation(summary = "Registrar resultado", description = "Registra el resultado final de una evaluación")
-    public ResponseEntity<ResultadoDTO> registrarResultado(@RequestBody ResultadoDTO resultadoDTO) {
+    public ResponseEntity<?> registrarResultado(@RequestBody ResultadoDTO resultadoDTO) {
         try {
             ResultadoDTO created = resultadoService.registrarResultado(resultadoDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
     @PostMapping("/calcular-automatico")
     @Operation(summary = "Calcular resultado automático", description = "Calcula automáticamente el resultado basado en las respuestas del usuario")
-    public ResponseEntity<ResultadoDTO> calcularResultadoAutomatico(
+    public ResponseEntity<?> calcularResultadoAutomatico(
             @RequestParam Integer usuarioId,
             @RequestParam Integer evaluacionId) {
         try {
             ResultadoDTO resultado = resultadoService.calcularResultadoAutomatico(usuarioId, evaluacionId);
             return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -97,5 +99,15 @@ public class ResultadoController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    private ResponseEntity<ErrorResponseData> createErrorResponse(HttpStatus status, String message) {
+        ErrorResponseData error = new ErrorResponseData(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+        return ResponseEntity.status(status).body(error);
     }
 }

@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.presentationLayer.controller;
 
 import com.schoolDays.noche_app.businessLayer.dto.UsuarioDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ErrorResponseData;
 import com.schoolDays.noche_app.businessLayer.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -27,7 +29,7 @@ import java.util.List;
  * - Búsquedas por departamento y rol
  */
 @RestController
-@RequestMapping("/api/v1/usuarios")
+@RequestMapping("v1/usuarios")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Usuarios", description = "Gestión de usuarios del sistema de capacitación")
@@ -62,11 +64,11 @@ public class UsuarioController {
                     description = "Error interno del servidor"
             )
     })
-    public ResponseEntity<UsuarioDTO> createUsuario(
+    public ResponseEntity<?> createUsuario(
             @Parameter(description = "Datos del usuario a crear", required = true)
             @RequestBody UsuarioDTO usuarioDTO
     ) {
-        log.info("POST /api/v1/usuarios - Creando usuario: {}", usuarioDTO.getCorreo());
+        log.info("POST /v1/usuarios - Creando usuario: {}", usuarioDTO.getCorreo());
 
         try {
             UsuarioDTO createdUsuario = usuarioService.createUsuario(usuarioDTO);
@@ -74,7 +76,7 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUsuario);
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al crear usuario: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -104,7 +106,7 @@ public class UsuarioController {
             @Parameter(description = "ID del usuario", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.debug("GET /api/v1/usuarios/{} - Buscando usuario", id);
+        log.debug("GET /v1/usuarios/{} - Buscando usuario", id);
 
         try {
             UsuarioDTO usuario = usuarioService.getUsuarioById(id);
@@ -132,7 +134,7 @@ public class UsuarioController {
             )
     )
     public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
-        log.debug("GET /api/v1/usuarios - Obteniendo todos los usuarios");
+        log.debug("GET /v1/usuarios - Obteniendo todos los usuarios");
 
         List<UsuarioDTO> usuarios = usuarioService.getAllUsuarios();
         log.debug("Se encontraron {} usuarios", usuarios.size());
@@ -171,7 +173,7 @@ public class UsuarioController {
             @Parameter(description = "Datos a actualizar del usuario", required = true)
             @RequestBody UsuarioDTO usuarioDTO
     ) {
-        log.info("PUT /api/v1/usuarios/{} - Actualizando usuario", id);
+        log.info("PUT /v1/usuarios/{} - Actualizando usuario", id);
 
         try {
             UsuarioDTO updatedUsuario = usuarioService.updateUsuario(id, usuarioDTO);
@@ -213,7 +215,7 @@ public class UsuarioController {
             @Parameter(description = "ID del usuario a eliminar", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.info("DELETE /api/v1/usuarios/{} - Eliminando usuario", id);
+        log.info("DELETE /v1/usuarios/{} - Eliminando usuario", id);
 
         try {
             usuarioService.deleteUsuario(id);
@@ -258,7 +260,7 @@ public class UsuarioController {
             @Parameter(description = "Correo del usuario", required = true, example = "usuario@empresa.com")
             @PathVariable String correo
     ) {
-        log.debug("GET /api/v1/usuarios/correo/{} - Buscando usuario por correo", correo);
+        log.debug("GET /v1/usuarios/correo/{} - Buscando usuario por correo", correo);
 
         try {
             UsuarioDTO usuario = usuarioService.getUsuarioByCorreo(correo);
@@ -289,7 +291,7 @@ public class UsuarioController {
             @Parameter(description = "Nombre del departamento", required = true, example = "Recursos Humanos")
             @PathVariable String departamento
     ) {
-        log.debug("GET /api/v1/usuarios/departamento/{} - Usuarios por departamento", departamento);
+        log.debug("GET /v1/usuarios/departamento/{} - Usuarios por departamento", departamento);
 
         List<UsuarioDTO> usuarios = usuarioService.getUsuariosByDepartamento(departamento);
         log.debug("Se encontraron {} usuarios en departamento {}", usuarios.size(), departamento);
@@ -313,7 +315,7 @@ public class UsuarioController {
             )
     )
     public ResponseEntity<List<UsuarioDTO>> getInstructores() {
-        log.debug("GET /api/v1/usuarios/instructores - Obteniendo instructores");
+        log.debug("GET /v1/usuarios/instructores - Obteniendo instructores");
 
         List<UsuarioDTO> instructores = usuarioService.getInstructores();
         log.debug("Se encontraron {} instructores", instructores.size());
@@ -337,7 +339,7 @@ public class UsuarioController {
             )
     )
     public ResponseEntity<List<UsuarioDTO>> getEstudiantes() {
-        log.debug("GET /api/v1/usuarios/estudiantes - Obteniendo estudiantes");
+        log.debug("GET /v1/usuarios/estudiantes - Obteniendo estudiantes");
 
         List<UsuarioDTO> estudiantes = usuarioService.getEstudiantes();
         log.debug("Se encontraron {} estudiantes", estudiantes.size());
@@ -364,7 +366,7 @@ public class UsuarioController {
             @Parameter(description = "Correo a verificar", required = true, example = "nuevo@empresa.com")
             @PathVariable String correo
     ) {
-        log.debug("GET /api/v1/usuarios/correo/{}/disponible - Verificando disponibilidad", correo);
+        log.debug("GET /v1/usuarios/correo/{}/disponible - Verificando disponibilidad", correo);
 
         boolean isAvailable = usuarioService.isCorreoAvailable(correo);
         return ResponseEntity.ok(isAvailable);
@@ -392,11 +394,11 @@ public class UsuarioController {
                     description = "Parámetro de búsqueda inválido"
             )
     })
-    public ResponseEntity<List<UsuarioDTO>> buscarUsuarios(
+    public ResponseEntity<?> buscarUsuarios(
             @Parameter(description = "Texto a buscar en nombre o apellido", required = true, example = "Carlos")
             @RequestParam String texto
     ) {
-        log.debug("GET /api/v1/usuarios/buscar?texto={} - Buscando usuarios", texto);
+        log.debug("GET /v1/usuarios/buscar?texto={} - Buscando usuarios", texto);
 
         try {
             List<UsuarioDTO> usuarios = usuarioService.searchUsuariosByNombre(texto);
@@ -404,7 +406,7 @@ public class UsuarioController {
             return ResponseEntity.ok(usuarios);
         } catch (IllegalArgumentException e) {
             log.warn("Parámetro de búsqueda inválido: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -430,7 +432,7 @@ public class UsuarioController {
                     description = "Usuario no encontrado"
             )
     })
-    public ResponseEntity<Void> cambiarContrasena(
+    public ResponseEntity<?> cambiarContrasena(
             @Parameter(description = "ID del usuario", required = true, example = "1")
             @PathVariable Integer id,
             @Parameter(description = "Contraseña actual", required = true)
@@ -438,7 +440,7 @@ public class UsuarioController {
             @Parameter(description = "Nueva contraseña", required = true)
             @RequestParam String nuevaContrasena
     ) {
-        log.info("PUT /api/v1/usuarios/{}/cambiar-contrasena - Cambiando contraseña", id);
+        log.info("PUT /v1/usuarios/{}/cambiar-contrasena - Cambiando contraseña", id);
 
         try {
             usuarioService.changePassword(id, contrasenaActual, nuevaContrasena);
@@ -446,10 +448,20 @@ public class UsuarioController {
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             log.warn("Error al cambiar contraseña usuario ID {}: {}", id, e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (RuntimeException e) {
             log.warn("Usuario no encontrado ID: {}", id);
             return ResponseEntity.notFound().build();
         }
+    }
+
+    private ResponseEntity<ErrorResponseData> createErrorResponse(HttpStatus status, String message) {
+        ErrorResponseData error = new ErrorResponseData(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+        return ResponseEntity.status(status).body(error);
     }
 }

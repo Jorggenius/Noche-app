@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.presentationLayer.controller;
 
 import com.schoolDays.noche_app.businessLayer.dto.RespuestaUsuarioDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ErrorResponseData;
 import com.schoolDays.noche_app.businessLayer.service.RespuestaUsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,10 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/respuestas-usuario")
+@RequestMapping("/v1/respuestas-usuario")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Respuestas Usuario", description = "Gestión de respuestas de usuarios en evaluaciones")
@@ -26,12 +28,12 @@ public class RespuestaUsuarioController {
 
     @PostMapping
     @Operation(summary = "Registrar respuesta", description = "Registra la respuesta de un usuario a una pregunta")
-    public ResponseEntity<RespuestaUsuarioDTO> registrarRespuesta(@RequestBody RespuestaUsuarioDTO respuestaUsuarioDTO) {
+    public ResponseEntity<?> registrarRespuesta(@RequestBody RespuestaUsuarioDTO respuestaUsuarioDTO) {
         try {
             RespuestaUsuarioDTO created = respuestaUsuarioService.registrarRespuesta(respuestaUsuarioDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -63,5 +65,15 @@ public class RespuestaUsuarioController {
     public ResponseEntity<List<RespuestaUsuarioDTO>> getRespuestasCorrectasByUsuario(@PathVariable Integer usuarioId) {
         List<RespuestaUsuarioDTO> correctas = respuestaUsuarioService.getRespuestasCorrectasByUsuario(usuarioId);
         return ResponseEntity.ok(correctas);
+    }
+
+    private ResponseEntity<ErrorResponseData> createErrorResponse(HttpStatus status, String message) {
+        ErrorResponseData error = new ErrorResponseData(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+        return ResponseEntity.status(status).body(error);
     }
 }
