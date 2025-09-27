@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.presentationLayer.controller;
 
 import com.schoolDays.noche_app.businessLayer.dto.EvaluacionDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ErrorResponseData;
 import com.schoolDays.noche_app.businessLayer.service.EvaluacionService;
 import com.schoolDays.noche_app.persistenceLayer.entity.EvaluacionEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,10 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/evaluaciones")
+@RequestMapping("/v1/evaluaciones")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Evaluaciones", description = "Gestión de evaluaciones y exámenes")
@@ -51,11 +53,11 @@ public class EvaluacionController {
                     description = "Módulo no encontrado"
             )
     })
-    public ResponseEntity<EvaluacionDTO> createEvaluacion(
+    public ResponseEntity<?> createEvaluacion(
             @Parameter(description = "Datos de la evaluación", required = true)
             @RequestBody EvaluacionDTO evaluacionDTO
     ) {
-        log.info("POST /api/v1/evaluaciones - Creando evaluación: {}", evaluacionDTO.getTitulo());
+        log.info("POST /v1/evaluaciones - Creando evaluación: {}", evaluacionDTO.getTitulo());
 
         try {
             EvaluacionDTO createdEvaluacion = evaluacionService.createEvaluacion(evaluacionDTO);
@@ -63,10 +65,10 @@ public class EvaluacionController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdEvaluacion);
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al crear evaluación: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (RuntimeException e) {
             log.warn("Error al crear evaluación: {}", e.getMessage());
-            return ResponseEntity.notFound().build();
+            return createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -79,7 +81,7 @@ public class EvaluacionController {
             @Parameter(description = "ID de la evaluación", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.debug("GET /api/v1/evaluaciones/{} - Buscando evaluación", id);
+        log.debug("GET /v1/evaluaciones/{} - Buscando evaluación", id);
 
         try {
             EvaluacionDTO evaluacion = evaluacionService.getEvaluacionById(id);
@@ -96,7 +98,7 @@ public class EvaluacionController {
             description = "Obtiene lista completa de evaluaciones del sistema"
     )
     public ResponseEntity<List<EvaluacionDTO>> getAllEvaluaciones() {
-        log.debug("GET /api/v1/evaluaciones - Obteniendo todas las evaluaciones");
+        log.debug("GET /v1/evaluaciones - Obteniendo todas las evaluaciones");
 
         List<EvaluacionDTO> evaluaciones = evaluacionService.getAllEvaluaciones();
         log.debug("Se encontraron {} evaluaciones", evaluaciones.size());
@@ -114,7 +116,7 @@ public class EvaluacionController {
             @Parameter(description = "Datos a actualizar", required = true)
             @RequestBody EvaluacionDTO evaluacionDTO
     ) {
-        log.info("PUT /api/v1/evaluaciones/{} - Actualizando evaluación", id);
+        log.info("PUT /v1/evaluaciones/{} - Actualizando evaluación", id);
 
         try {
             EvaluacionDTO updatedEvaluacion = evaluacionService.updateEvaluacion(id, evaluacionDTO);
@@ -137,7 +139,7 @@ public class EvaluacionController {
             @Parameter(description = "ID de la evaluación", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.info("DELETE /api/v1/evaluaciones/{} - Eliminando evaluación", id);
+        log.info("DELETE /v1/evaluaciones/{} - Eliminando evaluación", id);
 
         try {
             evaluacionService.deleteEvaluacion(id);
@@ -160,7 +162,7 @@ public class EvaluacionController {
             @Parameter(description = "ID del módulo", required = true, example = "1")
             @PathVariable Integer moduloId
     ) {
-        log.debug("GET /api/v1/evaluaciones/modulo/{} - Evaluaciones por módulo", moduloId);
+        log.debug("GET /v1/evaluaciones/modulo/{} - Evaluaciones por módulo", moduloId);
 
         try {
             List<EvaluacionDTO> evaluaciones = evaluacionService.getEvaluacionesByModulo(moduloId);
@@ -175,18 +177,18 @@ public class EvaluacionController {
             summary = "Evaluaciones por tipo",
             description = "Obtiene evaluaciones filtradas por tipo"
     )
-    public ResponseEntity<List<EvaluacionDTO>> getEvaluacionesByTipo(
+    public ResponseEntity<?> getEvaluacionesByTipo(
             @Parameter(description = "Tipo de evaluación", required = true, example = "MCQ")
             @PathVariable String tipo
     ) {
-        log.debug("GET /api/v1/evaluaciones/tipo/{} - Evaluaciones por tipo", tipo);
+        log.debug("GET /v1/evaluaciones/tipo/{} - Evaluaciones por tipo", tipo);
 
         try {
             EvaluacionEntity.TipoEvaluacion tipoEnum = EvaluacionEntity.TipoEvaluacion.valueOf(tipo.toUpperCase());
             List<EvaluacionDTO> evaluaciones = evaluacionService.getEvaluacionesByTipo(tipoEnum);
             return ResponseEntity.ok(evaluaciones);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, "Tipo de evaluación inválido: " + tipo);
         }
     }
 
@@ -199,7 +201,7 @@ public class EvaluacionController {
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer cursoId
     ) {
-        log.debug("GET /api/v1/evaluaciones/curso/{} - Evaluaciones por curso", cursoId);
+        log.debug("GET /v1/evaluaciones/curso/{} - Evaluaciones por curso", cursoId);
 
         List<EvaluacionDTO> evaluaciones = evaluacionService.getEvaluacionesByCurso(cursoId);
         return ResponseEntity.ok(evaluaciones);
@@ -210,13 +212,13 @@ public class EvaluacionController {
             summary = "Iniciar evaluación",
             description = "Inicia una evaluación para un usuario específico"
     )
-    public ResponseEntity<Void> iniciarEvaluacion(
+    public ResponseEntity<?> iniciarEvaluacion(
             @Parameter(description = "ID de la evaluación", required = true, example = "1")
             @PathVariable Integer id,
             @Parameter(description = "ID del usuario", required = true, example = "1")
             @RequestParam Integer usuarioId
     ) {
-        log.info("POST /api/v1/evaluaciones/{}/iniciar?usuarioId={}", id, usuarioId);
+        log.info("POST /v1/evaluaciones/{}/iniciar?usuarioId={}", id, usuarioId);
 
         try {
             evaluacionService.iniciarEvaluacion(id, usuarioId);
@@ -224,7 +226,7 @@ public class EvaluacionController {
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             log.warn("Error al iniciar evaluación: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -233,13 +235,13 @@ public class EvaluacionController {
             summary = "Finalizar evaluación",
             description = "Finaliza una evaluación y calcula el resultado"
     )
-    public ResponseEntity<Void> finalizarEvaluacion(
+    public ResponseEntity<?> finalizarEvaluacion(
             @Parameter(description = "ID de la evaluación", required = true, example = "1")
             @PathVariable Integer id,
             @Parameter(description = "ID del usuario", required = true, example = "1")
             @RequestParam Integer usuarioId
     ) {
-        log.info("POST /api/v1/evaluaciones/{}/finalizar?usuarioId={}", id, usuarioId);
+        log.info("POST /v1/evaluaciones/{}/finalizar?usuarioId={}", id, usuarioId);
 
         try {
             evaluacionService.finalizarEvaluacion(id, usuarioId);
@@ -247,7 +249,7 @@ public class EvaluacionController {
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             log.warn("Error al finalizar evaluación: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -260,9 +262,19 @@ public class EvaluacionController {
             @Parameter(description = "ID del usuario", required = true, example = "1")
             @PathVariable Integer usuarioId
     ) {
-        log.debug("GET /api/v1/evaluaciones/usuario/{}/pendientes", usuarioId);
+        log.debug("GET /v1/evaluaciones/usuario/{}/pendientes", usuarioId);
 
         List<EvaluacionDTO> evaluaciones = evaluacionService.getEvaluacionesPendientes(usuarioId);
         return ResponseEntity.ok(evaluaciones);
+    }
+
+    private ResponseEntity<ErrorResponseData> createErrorResponse(HttpStatus status, String message) {
+        ErrorResponseData error = new ErrorResponseData(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+        return ResponseEntity.status(status).body(error);
     }
 }

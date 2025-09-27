@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.presentationLayer.controller;
 
 import com.schoolDays.noche_app.businessLayer.dto.CertificadoDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ErrorResponseData;
 import com.schoolDays.noche_app.businessLayer.service.CertificadoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,10 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/certificados")
+@RequestMapping("/v1/certificados")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Certificados", description = "Gestión de certificados de finalización")
@@ -50,13 +52,13 @@ public class CertificadoController {
                     description = "Usuario o curso no encontrado"
             )
     })
-    public ResponseEntity<CertificadoDTO> generarCertificado(
+    public ResponseEntity<?> generarCertificado(
             @Parameter(description = "ID del usuario", required = true, example = "1")
             @RequestParam Integer idUsuario,
             @Parameter(description = "ID del curso", required = true, example = "1")
             @RequestParam Integer idCurso
     ) {
-        log.info("POST /api/v1/certificados?idUsuario={}&idCurso={} - Generando certificado", idUsuario, idCurso);
+        log.info("POST /v1/certificados?idUsuario={}&idCurso={} - Generando certificado", idUsuario, idCurso);
 
         try {
             CertificadoDTO certificado = certificadoService.generarCertificado(idUsuario, idCurso);
@@ -64,10 +66,10 @@ public class CertificadoController {
             return ResponseEntity.status(HttpStatus.CREATED).body(certificado);
         } catch (IllegalArgumentException e) {
             log.warn("Error al generar certificado: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (RuntimeException e) {
             log.warn("Usuario o curso no encontrado: {}", e.getMessage());
-            return ResponseEntity.notFound().build();
+            return createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -80,7 +82,7 @@ public class CertificadoController {
             @Parameter(description = "ID del certificado", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.debug("GET /api/v1/certificados/{} - Buscando certificado", id);
+        log.debug("GET /v1/certificados/{} - Buscando certificado", id);
 
         try {
             CertificadoDTO certificado = certificadoService.getCertificadoById(id);
@@ -97,7 +99,7 @@ public class CertificadoController {
             description = "Obtiene lista completa de certificados emitidos"
     )
     public ResponseEntity<List<CertificadoDTO>> getAllCertificados() {
-        log.debug("GET /api/v1/certificados - Obteniendo todos los certificados");
+        log.debug("GET /v1/certificados - Obteniendo todos los certificados");
 
         List<CertificadoDTO> certificados = certificadoService.getAllCertificados();
         log.debug("Se encontraron {} certificados", certificados.size());
@@ -113,7 +115,7 @@ public class CertificadoController {
             @Parameter(description = "ID del usuario", required = true, example = "1")
             @PathVariable Integer usuarioId
     ) {
-        log.debug("GET /api/v1/certificados/usuario/{} - Certificados por usuario", usuarioId);
+        log.debug("GET /v1/certificados/usuario/{} - Certificados por usuario", usuarioId);
 
         List<CertificadoDTO> certificados = certificadoService.getCertificadosByUsuario(usuarioId);
         return ResponseEntity.ok(certificados);
@@ -128,7 +130,7 @@ public class CertificadoController {
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer cursoId
     ) {
-        log.debug("GET /api/v1/certificados/curso/{} - Certificados por curso", cursoId);
+        log.debug("GET /v1/certificados/curso/{} - Certificados por curso", cursoId);
 
         List<CertificadoDTO> certificados = certificadoService.getCertificadosByCurso(cursoId);
         return ResponseEntity.ok(certificados);
@@ -157,7 +159,7 @@ public class CertificadoController {
             @Parameter(description = "Hash del certificado", required = true, example = "abc123def456")
             @PathVariable String hash
     ) {
-        log.debug("GET /api/v1/certificados/verificar/{} - Verificando certificado", hash);
+        log.debug("GET /v1/certificados/verificar/{} - Verificando certificado", hash);
 
         try {
             CertificadoDTO certificado = certificadoService.verificarCertificado(hash);
@@ -174,7 +176,7 @@ public class CertificadoController {
             description = "Obtiene los certificados más recientes ordenados por fecha de emisión"
     )
     public ResponseEntity<List<CertificadoDTO>> getCertificadosRecientes() {
-        log.debug("GET /api/v1/certificados/recientes - Certificados recientes");
+        log.debug("GET /v1/certificados/recientes - Certificados recientes");
 
         List<CertificadoDTO> certificados = certificadoService.getCertificadosRecientes();
         return ResponseEntity.ok(certificados);
@@ -189,7 +191,7 @@ public class CertificadoController {
             @Parameter(description = "Nombre del departamento", required = true, example = "IT")
             @PathVariable String departamento
     ) {
-        log.debug("GET /api/v1/certificados/departamento/{} - Certificados por departamento", departamento);
+        log.debug("GET /v1/certificados/departamento/{} - Certificados por departamento", departamento);
 
         List<CertificadoDTO> certificados = certificadoService.getCertificadosByDepartamento(departamento);
         return ResponseEntity.ok(certificados);
@@ -206,7 +208,7 @@ public class CertificadoController {
             @Parameter(description = "ID del curso", required = true, example = "1")
             @RequestParam Integer idCurso
     ) {
-        log.debug("GET /api/v1/certificados/puede-generar?idUsuario={}&idCurso={}", idUsuario, idCurso);
+        log.debug("GET /v1/certificados/puede-generar?idUsuario={}&idCurso={}", idUsuario, idCurso);
 
         boolean puede = certificadoService.puedeGenerarCertificado(idUsuario, idCurso);
         return ResponseEntity.ok(puede);
@@ -221,7 +223,7 @@ public class CertificadoController {
             @Parameter(description = "ID del certificado", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.info("PUT /api/v1/certificados/{}/regenerar - Regenerando certificado", id);
+        log.info("PUT /v1/certificados/{}/regenerar - Regenerando certificado", id);
 
         try {
             CertificadoDTO certificado = certificadoService.regenerarCertificado(id);
@@ -241,7 +243,7 @@ public class CertificadoController {
             @Parameter(description = "ID del certificado", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.info("DELETE /api/v1/certificados/{} - Revocando certificado", id);
+        log.info("DELETE /v1/certificados/{} - Revocando certificado", id);
 
         try {
             certificadoService.revocarCertificado(id);
@@ -261,7 +263,7 @@ public class CertificadoController {
             @Parameter(description = "ID del certificado", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.info("GET /api/v1/certificados/{}/pdf - Generando PDF", id);
+        log.info("GET /v1/certificados/{}/pdf - Generando PDF", id);
 
         try {
             byte[] pdfBytes = certificadoService.generarCertificadoPDF(id);
@@ -272,5 +274,15 @@ public class CertificadoController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    private ResponseEntity<ErrorResponseData> createErrorResponse(HttpStatus status, String message) {
+        ErrorResponseData error = new ErrorResponseData(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+        return ResponseEntity.status(status).body(error);
     }
 }

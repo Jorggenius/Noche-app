@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/cursos")
+@RequestMapping("/v1/cursos")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Cursos", description = "Gestión de cursos de capacitación")
@@ -57,7 +57,7 @@ public class CursoController {
             @Parameter(description = "Datos del curso a crear", required = true)
             @RequestBody CursoDTO cursoDTO
     ) {
-        log.info("POST /api/v1/cursos - Creando curso: {}", cursoDTO.getTitulo());
+        log.info("POST /v1/cursos - Creando curso: {}", cursoDTO.getTitulo());
 
         try {
             CursoDTO createdCurso = cursoService.createCurso(cursoDTO);
@@ -65,17 +65,7 @@ public class CursoController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdCurso);
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al crear curso: {}", e.getMessage());
-
-            ErrorResponseData error = new ErrorResponseData(
-                    LocalDateTime.now(),                      // timestamp
-                    HttpStatus.BAD_REQUEST.value(),           // status (400)
-                    HttpStatus.BAD_REQUEST.getReasonPhrase(), // error ("Bad Request")
-                    e.getMessage()                            // message
-            );
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(error);
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -88,7 +78,7 @@ public class CursoController {
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.debug("GET /api/v1/cursos/{} - Buscando curso", id);
+        log.debug("GET /v1/cursos/{} - Buscando curso", id);
 
         try {
             CursoDTO curso = cursoService.getCursoById(id);
@@ -105,7 +95,7 @@ public class CursoController {
             description = "Obtiene lista completa de cursos disponibles"
     )
     public ResponseEntity<List<CursoDTO>> getAllCursos() {
-        log.debug("GET /api/v1/cursos - Obteniendo todos los cursos");
+        log.debug("GET /v1/cursos - Obteniendo todos los cursos");
 
         List<CursoDTO> cursos = cursoService.getAllCursos();
         log.debug("Se encontraron {} cursos", cursos.size());
@@ -123,7 +113,7 @@ public class CursoController {
             @Parameter(description = "Datos a actualizar", required = true)
             @RequestBody CursoDTO cursoDTO
     ) {
-        log.info("PUT /api/v1/cursos/{} - Actualizando curso", id);
+        log.info("PUT /v1/cursos/{} - Actualizando curso", id);
 
         try {
             CursoDTO updatedCurso = cursoService.updateCurso(id, cursoDTO);
@@ -146,7 +136,7 @@ public class CursoController {
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.info("DELETE /api/v1/cursos/{} - Eliminando curso", id);
+        log.info("DELETE /v1/cursos/{} - Eliminando curso", id);
 
         try {
             cursoService.deleteCurso(id);
@@ -161,7 +151,6 @@ public class CursoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
     @GetMapping("/instructor/{instructorId}")
     @Operation(
             summary = "Cursos por instructor",
@@ -171,7 +160,7 @@ public class CursoController {
             @Parameter(description = "ID del instructor", required = true, example = "1")
             @PathVariable Integer instructorId
     ) {
-        log.debug("GET /api/v1/cursos/instructor/{} - Cursos por instructor", instructorId);
+        log.debug("GET /v1/cursos/instructor/{} - Cursos por instructor", instructorId);
 
         try {
             List<CursoDTO> cursos = cursoService.getCursosByCreador(instructorId);
@@ -186,18 +175,18 @@ public class CursoController {
             summary = "Cursos por nivel",
             description = "Obtiene cursos filtrados por nivel de dificultad"
     )
-    public ResponseEntity<List<CursoDTO>> getCursosByNivel(
+    public ResponseEntity<?> getCursosByNivel(
             @Parameter(description = "Nivel del curso", required = true, example = "BASICO")
             @PathVariable String nivel
     ) {
-        log.debug("GET /api/v1/cursos/nivel/{} - Cursos por nivel", nivel);
+        log.debug("GET /v1/cursos/nivel/{} - Cursos por nivel", nivel);
 
         try {
             CursoEntity.Nivel nivelEnum = CursoEntity.Nivel.valueOf(nivel.toUpperCase());
             List<CursoDTO> cursos = cursoService.getCursosByNivel(nivelEnum);
             return ResponseEntity.ok(cursos);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, "Nivel inválido: " + nivel);
         }
     }
 
@@ -206,17 +195,17 @@ public class CursoController {
             summary = "Buscar cursos por título",
             description = "Busca cursos que contengan el texto en el título"
     )
-    public ResponseEntity<List<CursoDTO>> searchCursosByTitulo(
+    public ResponseEntity<?> searchCursosByTitulo(
             @Parameter(description = "Texto a buscar", required = true, example = "Java")
             @RequestParam String titulo
     ) {
-        log.debug("GET /api/v1/cursos/buscar?titulo={} - Buscando cursos", titulo);
+        log.debug("GET /v1/cursos/buscar?titulo={} - Buscando cursos", titulo);
 
         try {
             List<CursoDTO> cursos = cursoService.searchCursosByTitulo(titulo);
             return ResponseEntity.ok(cursos);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -226,7 +215,7 @@ public class CursoController {
             description = "Obtiene cursos ordenados por número de inscripciones"
     )
     public ResponseEntity<List<CursoDTO>> getCursosMasPopulares() {
-        log.debug("GET /api/v1/cursos/populares - Cursos más populares");
+        log.debug("GET /v1/cursos/populares - Cursos más populares");
 
         List<CursoDTO> cursos = cursoService.getCursosMasPopulares();
         return ResponseEntity.ok(cursos);
@@ -238,9 +227,19 @@ public class CursoController {
             description = "Obtiene cursos ordenados por fecha de creación descendente"
     )
     public ResponseEntity<List<CursoDTO>> getCursosMasRecientes() {
-        log.debug("GET /api/v1/cursos/recientes - Cursos más recientes");
+        log.debug("GET /v1/cursos/recientes - Cursos más recientes");
 
         List<CursoDTO> cursos = cursoService.getCursosMasRecientes();
         return ResponseEntity.ok(cursos);
+    }
+
+    private ResponseEntity<ErrorResponseData> createErrorResponse(HttpStatus status, String message) {
+        ErrorResponseData error = new ErrorResponseData(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+        return ResponseEntity.status(status).body(error);
     }
 }

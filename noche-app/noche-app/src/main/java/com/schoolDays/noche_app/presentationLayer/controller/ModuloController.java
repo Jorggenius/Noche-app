@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.presentationLayer.controller;
 
 import com.schoolDays.noche_app.businessLayer.dto.ModuloDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ErrorResponseData;
 import com.schoolDays.noche_app.businessLayer.service.ModuloService;
 import com.schoolDays.noche_app.persistenceLayer.entity.ModuloEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,10 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/modulos")
+@RequestMapping("/v1/modulos")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Módulos", description = "Gestión de módulos de cursos")
@@ -51,11 +53,11 @@ public class ModuloController {
                     description = "Curso no encontrado"
             )
     })
-    public ResponseEntity<ModuloDTO> createModulo(
+    public ResponseEntity<?> createModulo(
             @Parameter(description = "Datos del módulo a crear", required = true)
             @RequestBody ModuloDTO moduloDTO
     ) {
-        log.info("POST /api/v1/modulos - Creando módulo: {}", moduloDTO.getTitulo());
+        log.info("POST /v1/modulos - Creando módulo: {}", moduloDTO.getTitulo());
 
         try {
             ModuloDTO createdModulo = moduloService.createModulo(moduloDTO);
@@ -63,10 +65,10 @@ public class ModuloController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdModulo);
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al crear módulo: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (RuntimeException e) {
             log.warn("Error al crear módulo: {}", e.getMessage());
-            return ResponseEntity.notFound().build();
+            return createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -79,7 +81,7 @@ public class ModuloController {
             @Parameter(description = "ID del módulo", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.debug("GET /api/v1/modulos/{} - Buscando módulo", id);
+        log.debug("GET /v1/modulos/{} - Buscando módulo", id);
 
         try {
             ModuloDTO modulo = moduloService.getModuloById(id);
@@ -96,7 +98,7 @@ public class ModuloController {
             description = "Obtiene lista completa de módulos del sistema"
     )
     public ResponseEntity<List<ModuloDTO>> getAllModulos() {
-        log.debug("GET /api/v1/modulos - Obteniendo todos los módulos");
+        log.debug("GET /v1/modulos - Obteniendo todos los módulos");
 
         List<ModuloDTO> modulos = moduloService.getAllModulos();
         log.debug("Se encontraron {} módulos", modulos.size());
@@ -114,7 +116,7 @@ public class ModuloController {
             @Parameter(description = "Datos a actualizar", required = true)
             @RequestBody ModuloDTO moduloDTO
     ) {
-        log.info("PUT /api/v1/modulos/{} - Actualizando módulo", id);
+        log.info("PUT /v1/modulos/{} - Actualizando módulo", id);
 
         try {
             ModuloDTO updatedModulo = moduloService.updateModulo(id, moduloDTO);
@@ -137,7 +139,7 @@ public class ModuloController {
             @Parameter(description = "ID del módulo", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.info("DELETE /api/v1/modulos/{} - Eliminando módulo", id);
+        log.info("DELETE /v1/modulos/{} - Eliminando módulo", id);
 
         try {
             moduloService.deleteModulo(id);
@@ -160,7 +162,7 @@ public class ModuloController {
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer cursoId
     ) {
-        log.debug("GET /api/v1/modulos/curso/{} - Módulos por curso", cursoId);
+        log.debug("GET /v1/modulos/curso/{} - Módulos por curso", cursoId);
 
         try {
             List<ModuloDTO> modulos = moduloService.getModulosByCursoOrdenados(cursoId);
@@ -175,18 +177,18 @@ public class ModuloController {
             summary = "Módulos por tipo",
             description = "Obtiene módulos filtrados por tipo de contenido"
     )
-    public ResponseEntity<List<ModuloDTO>> getModulosByTipo(
+    public ResponseEntity<?> getModulosByTipo(
             @Parameter(description = "Tipo de módulo", required = true, example = "VIDEO")
             @PathVariable String tipo
     ) {
-        log.debug("GET /api/v1/modulos/tipo/{} - Módulos por tipo", tipo);
+        log.debug("GET /v1/modulos/tipo/{} - Módulos por tipo", tipo);
 
         try {
             ModuloEntity.TipoModulo tipoEnum = ModuloEntity.TipoModulo.valueOf(tipo.toUpperCase());
             List<ModuloDTO> modulos = moduloService.getModulosByTipo(tipoEnum);
             return ResponseEntity.ok(modulos);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, "Tipo de módulo inválido: " + tipo);
         }
     }
 
@@ -199,7 +201,7 @@ public class ModuloController {
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer cursoId
     ) {
-        log.debug("GET /api/v1/modulos/curso/{}/primero - Primer módulo", cursoId);
+        log.debug("GET /v1/modulos/curso/{}/primero - Primer módulo", cursoId);
 
         try {
             ModuloDTO modulo = moduloService.getPrimerModuloCurso(cursoId);
@@ -218,7 +220,7 @@ public class ModuloController {
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer cursoId
     ) {
-        log.debug("GET /api/v1/modulos/curso/{}/ultimo - Último módulo", cursoId);
+        log.debug("GET /v1/modulos/curso/{}/ultimo - Último módulo", cursoId);
 
         try {
             ModuloDTO modulo = moduloService.getUltimoModuloCurso(cursoId);
@@ -251,13 +253,13 @@ public class ModuloController {
                     description = "Módulo no encontrado"
             )
     })
-    public ResponseEntity<ModuloDTO> cambiarOrdenModulo(
+    public ResponseEntity<?> cambiarOrdenModulo(
             @Parameter(description = "ID del módulo", required = true, example = "1")
             @PathVariable Integer id,
             @Parameter(description = "Nuevo orden", required = true, example = "3")
             @RequestParam Integer nuevoOrden
     ) {
-        log.info("PUT /api/v1/modulos/{}/orden?nuevoOrden={}", id, nuevoOrden);
+        log.info("PUT /v1/modulos/{}/orden?nuevoOrden={}", id, nuevoOrden);
 
         try {
             ModuloDTO updatedModulo = moduloService.cambiarOrdenModulo(id, nuevoOrden);
@@ -265,10 +267,10 @@ public class ModuloController {
             return ResponseEntity.ok(updatedModulo);
         } catch (IllegalArgumentException e) {
             log.warn("Orden inválido para módulo ID {}: {}", id, e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (RuntimeException e) {
             log.warn("Módulo no encontrado ID: {}", id);
-            return ResponseEntity.notFound().build();
+            return createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -281,7 +283,7 @@ public class ModuloController {
             @Parameter(description = "ID del módulo actual", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.debug("GET /api/v1/modulos/{}/siguiente - Siguiente módulo", id);
+        log.debug("GET /v1/modulos/{}/siguiente - Siguiente módulo", id);
 
         try {
             ModuloDTO siguienteModulo = moduloService.getSiguienteModulo(id);
@@ -300,7 +302,7 @@ public class ModuloController {
             @Parameter(description = "ID del módulo actual", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.debug("GET /api/v1/modulos/{}/anterior - Módulo anterior", id);
+        log.debug("GET /v1/modulos/{}/anterior - Módulo anterior", id);
 
         try {
             ModuloDTO moduloAnterior = moduloService.getModuloAnterior(id);
@@ -319,7 +321,7 @@ public class ModuloController {
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer cursoId
     ) {
-        log.debug("GET /api/v1/modulos/curso/{}/count - Conteo de módulos", cursoId);
+        log.debug("GET /v1/modulos/curso/{}/count - Conteo de módulos", cursoId);
 
         try {
             Long count = moduloService.getModulosCountByCurso(cursoId);
@@ -327,5 +329,15 @@ public class ModuloController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    private ResponseEntity<ErrorResponseData> createErrorResponse(HttpStatus status, String message) {
+        ErrorResponseData error = new ErrorResponseData(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+        return ResponseEntity.status(status).body(error);
     }
 }

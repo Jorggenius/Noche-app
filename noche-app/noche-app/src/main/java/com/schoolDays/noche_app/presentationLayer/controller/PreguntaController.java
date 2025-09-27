@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.presentationLayer.controller;
 
 import com.schoolDays.noche_app.businessLayer.dto.PreguntaDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ErrorResponseData;
 import com.schoolDays.noche_app.businessLayer.service.PreguntaService;
 import com.schoolDays.noche_app.persistenceLayer.entity.PreguntaEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,10 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/preguntas")
+@RequestMapping("/v1/preguntas")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Preguntas", description = "Gestión de preguntas para evaluaciones")
@@ -51,11 +53,11 @@ public class PreguntaController {
                     description = "Evaluación no encontrada"
             )
     })
-    public ResponseEntity<PreguntaDTO> createPregunta(
+    public ResponseEntity<?> createPregunta(
             @Parameter(description = "Datos de la pregunta", required = true)
             @RequestBody PreguntaDTO preguntaDTO
     ) {
-        log.info("POST /api/v1/preguntas - Creando pregunta para evaluación: {}", preguntaDTO.getIdEvaluacion());
+        log.info("POST /v1/preguntas - Creando pregunta para evaluación: {}", preguntaDTO.getIdEvaluacion());
 
         try {
             PreguntaDTO createdPregunta = preguntaService.createPregunta(preguntaDTO);
@@ -63,10 +65,10 @@ public class PreguntaController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPregunta);
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al crear pregunta: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (RuntimeException e) {
             log.warn("Error al crear pregunta: {}", e.getMessage());
-            return ResponseEntity.notFound().build();
+            return createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -79,7 +81,7 @@ public class PreguntaController {
             @Parameter(description = "ID de la pregunta", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.debug("GET /api/v1/preguntas/{} - Buscando pregunta", id);
+        log.debug("GET /v1/preguntas/{} - Buscando pregunta", id);
 
         try {
             PreguntaDTO pregunta = preguntaService.getPreguntaById(id);
@@ -96,7 +98,7 @@ public class PreguntaController {
             description = "Obtiene lista completa de preguntas del sistema"
     )
     public ResponseEntity<List<PreguntaDTO>> getAllPreguntas() {
-        log.debug("GET /api/v1/preguntas - Obteniendo todas las preguntas");
+        log.debug("GET /v1/preguntas - Obteniendo todas las preguntas");
 
         List<PreguntaDTO> preguntas = preguntaService.getAllPreguntas();
         log.debug("Se encontraron {} preguntas", preguntas.size());
@@ -114,7 +116,7 @@ public class PreguntaController {
             @Parameter(description = "Datos a actualizar", required = true)
             @RequestBody PreguntaDTO preguntaDTO
     ) {
-        log.info("PUT /api/v1/preguntas/{} - Actualizando pregunta", id);
+        log.info("PUT /v1/preguntas/{} - Actualizando pregunta", id);
 
         try {
             PreguntaDTO updatedPregunta = preguntaService.updatePregunta(id, preguntaDTO);
@@ -137,7 +139,7 @@ public class PreguntaController {
             @Parameter(description = "ID de la pregunta", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.info("DELETE /api/v1/preguntas/{} - Eliminando pregunta", id);
+        log.info("DELETE /v1/preguntas/{} - Eliminando pregunta", id);
 
         try {
             preguntaService.deletePregunta(id);
@@ -160,7 +162,7 @@ public class PreguntaController {
             @Parameter(description = "ID de la evaluación", required = true, example = "1")
             @PathVariable Integer evaluacionId
     ) {
-        log.debug("GET /api/v1/preguntas/evaluacion/{} - Preguntas por evaluación", evaluacionId);
+        log.debug("GET /v1/preguntas/evaluacion/{} - Preguntas por evaluación", evaluacionId);
 
         try {
             List<PreguntaDTO> preguntas = preguntaService.getPreguntasByEvaluacionOrdenadas(evaluacionId);
@@ -175,18 +177,18 @@ public class PreguntaController {
             summary = "Preguntas por tipo",
             description = "Obtiene preguntas filtradas por tipo"
     )
-    public ResponseEntity<List<PreguntaDTO>> getPreguntasByTipo(
+    public ResponseEntity<?> getPreguntasByTipo(
             @Parameter(description = "Tipo de pregunta", required = true, example = "MULTIPLE_CHOICE")
             @PathVariable String tipo
     ) {
-        log.debug("GET /api/v1/preguntas/tipo/{} - Preguntas por tipo", tipo);
+        log.debug("GET /v1/preguntas/tipo/{} - Preguntas por tipo", tipo);
 
         try {
             PreguntaEntity.TipoPregunta tipoEnum = PreguntaEntity.TipoPregunta.valueOf(tipo.toUpperCase());
             List<PreguntaDTO> preguntas = preguntaService.getPreguntasByTipo(tipoEnum);
             return ResponseEntity.ok(preguntas);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, "Tipo de pregunta inválido: " + tipo);
         }
     }
 
@@ -199,7 +201,7 @@ public class PreguntaController {
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer cursoId
     ) {
-        log.debug("GET /api/v1/preguntas/curso/{} - Preguntas por curso", cursoId);
+        log.debug("GET /v1/preguntas/curso/{} - Preguntas por curso", cursoId);
 
         List<PreguntaDTO> preguntas = preguntaService.getPreguntasByCurso(cursoId);
         return ResponseEntity.ok(preguntas);
@@ -214,7 +216,7 @@ public class PreguntaController {
             @Parameter(description = "ID de la evaluación", required = true, example = "1")
             @PathVariable Integer evaluacionId
     ) {
-        log.debug("GET /api/v1/preguntas/evaluacion/{}/multiple-choice", evaluacionId);
+        log.debug("GET /v1/preguntas/evaluacion/{}/multiple-choice", evaluacionId);
 
         List<PreguntaDTO> preguntas = preguntaService.getPreguntasMultipleChoice(evaluacionId);
         return ResponseEntity.ok(preguntas);
@@ -229,7 +231,7 @@ public class PreguntaController {
             @Parameter(description = "ID de la evaluación", required = true, example = "1")
             @PathVariable Integer evaluacionId
     ) {
-        log.debug("GET /api/v1/preguntas/evaluacion/{}/abiertas", evaluacionId);
+        log.debug("GET /v1/preguntas/evaluacion/{}/abiertas", evaluacionId);
 
         List<PreguntaDTO> preguntas = preguntaService.getPreguntasAbiertas(evaluacionId);
         return ResponseEntity.ok(preguntas);
@@ -240,22 +242,22 @@ public class PreguntaController {
             summary = "Cambiar orden de pregunta",
             description = "Cambia la posición de una pregunta dentro de la evaluación"
     )
-    public ResponseEntity<PreguntaDTO> cambiarOrdenPregunta(
+    public ResponseEntity<?> cambiarOrdenPregunta(
             @Parameter(description = "ID de la pregunta", required = true, example = "1")
             @PathVariable Integer id,
             @Parameter(description = "Nuevo orden", required = true, example = "2")
             @RequestParam Integer nuevoOrden
     ) {
-        log.info("PUT /api/v1/preguntas/{}/orden?nuevoOrden={}", id, nuevoOrden);
+        log.info("PUT /v1/preguntas/{}/orden?nuevoOrden={}", id, nuevoOrden);
 
         try {
             PreguntaDTO updatedPregunta = preguntaService.cambiarOrdenPregunta(id, nuevoOrden);
             log.info("Orden cambiado para pregunta ID: {} a orden {}", id, nuevoOrden);
             return ResponseEntity.ok(updatedPregunta);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -264,20 +266,30 @@ public class PreguntaController {
             summary = "Duplicar pregunta",
             description = "Crea una copia de una pregunta en otra evaluación"
     )
-    public ResponseEntity<PreguntaDTO> duplicarPregunta(
+    public ResponseEntity<?> duplicarPregunta(
             @Parameter(description = "ID de la pregunta original", required = true, example = "1")
             @PathVariable Integer id,
             @Parameter(description = "ID de la evaluación destino", required = true, example = "2")
             @RequestParam Integer nuevaEvaluacionId
     ) {
-        log.info("POST /api/v1/preguntas/{}/duplicar?nuevaEvaluacionId={}", id, nuevaEvaluacionId);
+        log.info("POST /v1/preguntas/{}/duplicar?nuevaEvaluacionId={}", id, nuevaEvaluacionId);
 
         try {
             PreguntaDTO duplicatedPregunta = preguntaService.duplicarPregunta(id, nuevaEvaluacionId);
             log.info("Pregunta duplicada exitosamente con ID: {}", duplicatedPregunta.getIdPregunta());
             return ResponseEntity.status(HttpStatus.CREATED).body(duplicatedPregunta);
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
         }
+    }
+
+    private ResponseEntity<ErrorResponseData> createErrorResponse(HttpStatus status, String message) {
+        ErrorResponseData error = new ErrorResponseData(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+        return ResponseEntity.status(status).body(error);
     }
 }
