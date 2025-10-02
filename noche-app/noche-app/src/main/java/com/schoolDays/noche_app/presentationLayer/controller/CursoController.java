@@ -130,7 +130,7 @@ public class CursoController {
             summary = "Eliminar curso",
             description = "Elimina un curso. No se puede eliminar si tiene inscripciones activas."
     )
-    public ResponseEntity<Void> deleteCurso(
+    public ResponseEntity<?> deleteCurso(
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer id
     ) {
@@ -142,15 +142,20 @@ public class CursoController {
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             if (e.getMessage().contains("no encontrado")) {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
             } else if (e.getMessage().contains("inscripciones")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
             }
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
+<<<<<<< Updated upstream
     @GetMapping("/instructor/{instructorId}")
+=======
+
+        @GetMapping("/instructor/{instructorId}")
+>>>>>>> Stashed changes
     @Operation(
             summary = "Cursos por instructor",
             description = "Obtiene todos los cursos creados por un instructor"
