@@ -151,11 +151,8 @@ public class CursoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    @GetMapping("/instructor/{instructorId}")
-=======
 
         @GetMapping("/instructor/{instructorId}")
->>>>>>> Stashed changes
     @Operation(
             summary = "Cursos por instructor",
             description = "Obtiene todos los cursos creados por un instructor"
