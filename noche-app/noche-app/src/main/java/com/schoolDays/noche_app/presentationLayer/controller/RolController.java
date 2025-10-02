@@ -63,13 +63,20 @@ public class RolController {
             return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-
     @GetMapping("/{id}")
     @Operation(
             summary = "Buscar rol por ID",
             description = "Obtiene información completa de un rol específico"
     )
-    public ResponseEntity<RolDTO> getRolById(
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Rol encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RolDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Rol no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseData.class)))
+    })
+    public ResponseEntity<?> getRolById(
             @Parameter(description = "ID del rol", required = true, example = "1")
             @PathVariable Integer id
     ) {
@@ -80,15 +87,24 @@ public class RolController {
             return ResponseEntity.ok(rol);
         } catch (RuntimeException e) {
             log.warn("Rol no encontrado con ID: {}", id);
-            return ResponseEntity.notFound().build();
+            return createErrorResponse(HttpStatus.NOT_FOUND, "Rol no encontrado con ID: " + id);
         }
     }
+
+
 
     @GetMapping
     @Operation(
             summary = "Listar todos los roles",
             description = "Obtiene lista completa de roles del sistema"
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de roles obtenida con éxito",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RolDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Error de validación en la solicitud"),
+            @ApiResponse(responseCode = "404", description = "No se encontraron roles")
+    })
     public ResponseEntity<List<RolDTO>> getAllRoles() {
         log.debug("GET /v1/roles - Obteniendo todos los roles");
 
@@ -97,12 +113,13 @@ public class RolController {
         return ResponseEntity.ok(roles);
     }
 
+
     @PutMapping("/{id}")
     @Operation(
             summary = "Actualizar rol",
             description = "Actualiza información de un rol existente"
     )
-    public ResponseEntity<RolDTO> updateRol(
+    public ResponseEntity<?> updateRol(
             @Parameter(description = "ID del rol", required = true, example = "1")
             @PathVariable Integer id,
             @Parameter(description = "Datos a actualizar", required = true)
@@ -116,18 +133,19 @@ public class RolController {
             return ResponseEntity.ok(updatedRol);
         } catch (RuntimeException e) {
             if (e.getMessage().contains("no encontrado")) {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
             }
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @DeleteMapping("/{id}")
+
+        @DeleteMapping("/{id}")
     @Operation(
             summary = "Eliminar rol",
             description = "Elimina un rol del sistema"
     )
-    public ResponseEntity<Void> deleteRol(
+    public ResponseEntity<?> deleteRol(
             @Parameter(description = "ID del rol", required = true, example = "1")
             @PathVariable Integer id
     ) {
@@ -136,12 +154,12 @@ public class RolController {
         try {
             rolService.deleteRol(id);
             log.info("Rol eliminado exitosamente ID: {}", id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(HttpStatus.OK).body("se elimino exitosamente");
         } catch (RuntimeException e) {
             if (e.getMessage().contains("no encontrado")) {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
             }
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

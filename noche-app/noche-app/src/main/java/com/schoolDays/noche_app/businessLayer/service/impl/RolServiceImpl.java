@@ -69,10 +69,7 @@ public class RolServiceImpl implements RolService {
         log.info("Eliminando rol ID: {}", id);
 
         getRolById(id); // Verificar existencia
-
-        if (!rolDAO.deleteById(id)) {
-            throw new RuntimeException("Error al eliminar rol con ID: " + id);
-        }
+        rolDAO.deleteById(id);
 
         log.info("Rol eliminado exitosamente ID: {}", id);
     }
