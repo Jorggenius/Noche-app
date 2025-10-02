@@ -1,6 +1,7 @@
 package com.schoolDays.noche_app.presentationLayer.controller;
 
 import com.schoolDays.noche_app.businessLayer.dto.BadgeDTO;
+import com.schoolDays.noche_app.businessLayer.dto.ErrorResponseData;
 import com.schoolDays.noche_app.businessLayer.service.BadgeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,10 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/badges")
+@RequestMapping("/v1/badges")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Badges", description = "Sistema de gamificación - gestión de logros")
@@ -46,11 +48,11 @@ public class BadgeController {
                     description = "Datos inválidos o nombre duplicado"
             )
     })
-    public ResponseEntity<BadgeDTO> createBadge(
+    public ResponseEntity<?> createBadge(
             @Parameter(description = "Datos del badge a crear", required = true)
             @RequestBody BadgeDTO badgeDTO
     ) {
-        log.info("POST /api/v1/badges - Creando badge: {}", badgeDTO.getNombre());
+        log.info("POST /v1/badges - Creando badge: {}", badgeDTO.getNombre());
 
         try {
             BadgeDTO createdBadge = badgeService.createBadge(badgeDTO);
@@ -58,7 +60,7 @@ public class BadgeController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdBadge);
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al crear badge: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -71,7 +73,7 @@ public class BadgeController {
             @Parameter(description = "ID del badge", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.debug("GET /api/v1/badges/{} - Buscando badge", id);
+        log.debug("GET /v1/badges/{} - Buscando badge", id);
 
         try {
             BadgeDTO badge = badgeService.getBadgeById(id);
@@ -88,7 +90,7 @@ public class BadgeController {
             description = "Obtiene lista completa de badges disponibles"
     )
     public ResponseEntity<List<BadgeDTO>> getAllBadges() {
-        log.debug("GET /api/v1/badges - Obteniendo todos los badges");
+        log.debug("GET /v1/badges - Obteniendo todos los badges");
 
         List<BadgeDTO> badges = badgeService.getAllBadges();
         log.debug("Se encontraron {} badges", badges.size());
@@ -106,7 +108,7 @@ public class BadgeController {
             @Parameter(description = "Datos a actualizar", required = true)
             @RequestBody BadgeDTO badgeDTO
     ) {
-        log.info("PUT /api/v1/badges/{} - Actualizando badge", id);
+        log.info("PUT /v1/badges/{} - Actualizando badge", id);
 
         try {
             BadgeDTO updatedBadge = badgeService.updateBadge(id, badgeDTO);
@@ -143,7 +145,7 @@ public class BadgeController {
             @Parameter(description = "ID del badge", required = true, example = "1")
             @PathVariable Integer id
     ) {
-        log.info("DELETE /api/v1/badges/{} - Eliminando badge", id);
+        log.info("DELETE /v1/badges/{} - Eliminando badge", id);
 
         try {
             badgeService.deleteBadge(id);
@@ -164,17 +166,17 @@ public class BadgeController {
             summary = "Buscar badges por nombre",
             description = "Busca badges que contengan el texto en el nombre"
     )
-    public ResponseEntity<List<BadgeDTO>> searchBadgesByNombre(
+    public ResponseEntity<?> searchBadgesByNombre(
             @Parameter(description = "Texto a buscar", required = true, example = "Primer")
             @RequestParam String nombre
     ) {
-        log.debug("GET /api/v1/badges/buscar?nombre={} - Buscando badges", nombre);
+        log.debug("GET /v1/badges/buscar?nombre={} - Buscando badges", nombre);
 
         try {
             List<BadgeDTO> badges = badgeService.searchBadgesByNombre(nombre);
             return ResponseEntity.ok(badges);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -184,7 +186,7 @@ public class BadgeController {
             description = "Obtiene badges ordenados por número de asignaciones"
     )
     public ResponseEntity<List<BadgeDTO>> getBadgesMasOtorgados() {
-        log.debug("GET /api/v1/badges/mas-otorgados - Badges más otorgados");
+        log.debug("GET /v1/badges/mas-otorgados - Badges más otorgados");
 
         List<BadgeDTO> badges = badgeService.getBadgesMasOtorgados();
         return ResponseEntity.ok(badges);
@@ -196,7 +198,7 @@ public class BadgeController {
             description = "Obtiene badges que han sido otorgados al menos una vez"
     )
     public ResponseEntity<List<BadgeDTO>> getBadgesConAsignaciones() {
-        log.debug("GET /api/v1/badges/con-asignaciones - Badges con asignaciones");
+        log.debug("GET /v1/badges/con-asignaciones - Badges con asignaciones");
 
         List<BadgeDTO> badges = badgeService.getBadgesConAsignaciones();
         return ResponseEntity.ok(badges);
@@ -208,7 +210,7 @@ public class BadgeController {
             description = "Obtiene badges que nunca han sido otorgados"
     )
     public ResponseEntity<List<BadgeDTO>> getBadgesSinAsignaciones() {
-        log.debug("GET /api/v1/badges/sin-asignaciones - Badges sin asignaciones");
+        log.debug("GET /v1/badges/sin-asignaciones - Badges sin asignaciones");
 
         List<BadgeDTO> badges = badgeService.getBadgesSinAsignaciones();
         return ResponseEntity.ok(badges);
@@ -223,7 +225,7 @@ public class BadgeController {
             @Parameter(description = "Nombre a verificar", required = true, example = "Nuevo Badge")
             @PathVariable String nombre
     ) {
-        log.debug("GET /api/v1/badges/nombre/{}/disponible - Verificando disponibilidad", nombre);
+        log.debug("GET /v1/badges/nombre/{}/disponible - Verificando disponibilidad", nombre);
 
         boolean disponible = badgeService.isNombreDisponible(nombre);
         return ResponseEntity.ok(disponible);
@@ -234,11 +236,11 @@ public class BadgeController {
             summary = "Procesar badges automáticos",
             description = "Procesa y otorga badges automáticos para un usuario"
     )
-    public ResponseEntity<Void> procesarBadgesAutomaticos(
+    public ResponseEntity<?> procesarBadgesAutomaticos(
             @Parameter(description = "ID del usuario", required = true, example = "1")
             @RequestParam Integer idUsuario
     ) {
-        log.info("POST /api/v1/badges/procesar-automaticos?idUsuario={}", idUsuario);
+        log.info("POST /v1/badges/procesar-automaticos?idUsuario={}", idUsuario);
 
         try {
             badgeService.procesarBadgesAutomaticos(idUsuario);
@@ -246,7 +248,7 @@ public class BadgeController {
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             log.warn("Error al procesar badges automáticos: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -261,7 +263,7 @@ public class BadgeController {
             @Parameter(description = "ID del badge", required = true, example = "1")
             @PathVariable Integer idBadge
     ) {
-        log.debug("GET /api/v1/badges/usuario/{}/criterio/{} - Verificando criterio", idUsuario, idBadge);
+        log.debug("GET /v1/badges/usuario/{}/criterio/{} - Verificando criterio", idUsuario, idBadge);
 
         try {
             boolean cumple = badgeService.cumpleCriterio(idUsuario, idBadge);
@@ -269,5 +271,15 @@ public class BadgeController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    private ResponseEntity<ErrorResponseData> createErrorResponse(HttpStatus status, String message) {
+        ErrorResponseData error = new ErrorResponseData(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+        return ResponseEntity.status(status).body(error);
     }
 }

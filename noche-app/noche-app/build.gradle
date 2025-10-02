@@ -26,7 +26,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // OpenAPI / Swagger - VERSIÓN CORREGIDA
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
 
     // Base de datos - SOLO UNA DEPENDENCIA
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
