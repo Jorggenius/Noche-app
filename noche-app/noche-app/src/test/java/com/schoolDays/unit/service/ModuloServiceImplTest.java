@@ -38,7 +38,7 @@ class ModuloServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ createModulo - éxito
+    //  createModulo - éxito
     // ---------------------------------------------------------------------------------
     @Test
     void testCreateModulo_Exito() {
@@ -53,7 +53,7 @@ class ModuloServiceImplTest {
         verify(moduloDAO).save(any(ModuloDTO.class));
     }
 
-    // ❌ curso no existe
+    // curso no existe
     @Test
     void testCreateModulo_CursoNoExiste() {
         doThrow(new RuntimeException("Curso no encontrado")).when(cursoService).getCursoById(10);
@@ -62,7 +62,7 @@ class ModuloServiceImplTest {
         assertEquals("Curso no encontrado", ex.getMessage());
     }
 
-    // ❌ orden repetido
+    // orden repetido
     @Test
     void testCreateModulo_OrdenRepetido() {
         when(cursoService.getCursoById(10)).thenReturn(null);
@@ -71,7 +71,7 @@ class ModuloServiceImplTest {
         assertThrows(IllegalArgumentException.class, () -> moduloService.createModulo(moduloDTO));
     }
 
-    // ❌ datos inválidos
+    // datos inválidos
     @Test
     void testCreateModulo_TituloVacio() {
         moduloDTO.setTitulo("");
@@ -85,7 +85,7 @@ class ModuloServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ getModuloById
+    // getModuloById
     // ---------------------------------------------------------------------------------
     @Test
     void testGetModuloById_Exito() {
@@ -101,7 +101,7 @@ class ModuloServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ updateModulo
+    // updateModulo
     // ---------------------------------------------------------------------------------
     @Test
     void testUpdateModulo_Exito() {
@@ -140,7 +140,7 @@ class ModuloServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ deleteModulo
+    // deleteModulo
     // ---------------------------------------------------------------------------------
     @Test
     void testDeleteModulo_Exito() {
@@ -160,7 +160,7 @@ class ModuloServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ getModulosByCursoOrdenados
+    // getModulosByCursoOrdenados
     // ---------------------------------------------------------------------------------
     @Test
     void testGetModulosByCursoOrdenados_Exito() {
@@ -173,7 +173,7 @@ class ModuloServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ getPrimerModuloCurso
+    // getPrimerModuloCurso
     // ---------------------------------------------------------------------------------
     @Test
     void testGetPrimerModuloCurso_Exito() {
@@ -193,7 +193,7 @@ class ModuloServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ getUltimoModuloCurso
+    // getUltimoModuloCurso
     // ---------------------------------------------------------------------------------
     @Test
     void testGetUltimoModuloCurso_Exito() {
@@ -213,7 +213,7 @@ class ModuloServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ cambiarOrdenModulo
+    // cambiarOrdenModulo
     // ---------------------------------------------------------------------------------
     @Test
     void testCambiarOrdenModulo_Exito() {
@@ -233,7 +233,7 @@ class ModuloServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ getModulosCountByCurso
+    // getModulosCountByCurso
     // ---------------------------------------------------------------------------------
     @Test
     void testGetModulosCountByCurso_Exito() {
