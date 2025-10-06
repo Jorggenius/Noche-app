@@ -42,7 +42,7 @@ class InscripcionServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ TEST: inscribirUsuario - éxito
+    //  TEST: inscribirUsuario - éxito
     // ---------------------------------------------------------------------------------
     @Test
     void testInscribirUsuario_Exito() {
@@ -59,7 +59,7 @@ class InscripcionServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ❌ TEST: inscribirUsuario - usuario no encontrado
+    //  TEST: inscribirUsuario - usuario no encontrado
     // ---------------------------------------------------------------------------------
     @Test
     void testInscribirUsuario_UsuarioNoEncontrado() {
@@ -72,7 +72,7 @@ class InscripcionServiceImplTest {
         assertEquals("Usuario no encontrado con ID: 10", ex.getMessage());
     }
 
-    // ❌ TEST: inscribirUsuario - curso no encontrado
+    // TEST: inscribirUsuario - curso no encontrado
     @Test
     void testInscribirUsuario_CursoNoEncontrado() {
         when(usuarioDAO.findById(10)).thenReturn(Optional.of(new UsuarioDTO()));
@@ -84,7 +84,7 @@ class InscripcionServiceImplTest {
         assertEquals("Curso no encontrado con ID: 20", ex.getMessage());
     }
 
-    // ❌ TEST: inscribirUsuario - ya inscrito
+    //  TEST: inscribirUsuario - ya inscrito
     @Test
     void testInscribirUsuario_YaInscrito() {
         when(usuarioDAO.findById(10)).thenReturn(Optional.of(new UsuarioDTO()));
@@ -95,7 +95,7 @@ class InscripcionServiceImplTest {
                 () -> inscripcionService.inscribirUsuario(inscripcionDTO));
     }
 
-    // ❌ TEST: inscribirUsuario - datos inválidos
+    // TEST: inscribirUsuario - datos inválidos
     @Test
     void testInscribirUsuario_DatosInvalidos() {
         InscripcionDTO dto = new InscripcionDTO();
@@ -106,7 +106,7 @@ class InscripcionServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ TEST: getInscripcionById
+    // TEST: getInscripcionById
     // ---------------------------------------------------------------------------------
     @Test
     void testGetInscripcionById_Exito() {
@@ -126,7 +126,7 @@ class InscripcionServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ TEST: updateProgreso - éxito y cambio de estado
+    // TEST: updateProgreso - éxito y cambio de estado
     // ---------------------------------------------------------------------------------
     @Test
     void testUpdateProgreso_EnProgreso() {
@@ -159,7 +159,7 @@ class InscripcionServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ TEST: cancelarInscripcion
+    // TEST: cancelarInscripcion
     // ---------------------------------------------------------------------------------
     @Test
     void testCancelarInscripcion() {
@@ -168,7 +168,7 @@ class InscripcionServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ TEST: puedeInscribirse
+    // TEST: puedeInscribirse
     // ---------------------------------------------------------------------------------
     @Test
     void testPuedeInscribirse_True() {
@@ -189,7 +189,7 @@ class InscripcionServiceImplTest {
     }
 
     // ---------------------------------------------------------------------------------
-    // ✅ TEST: getCursosCompletadosByUsuario
+    // TEST: getCursosCompletadosByUsuario
     // ---------------------------------------------------------------------------------
     @Test
     void testGetCursosCompletadosByUsuario_Exito() {
