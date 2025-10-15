@@ -4,6 +4,8 @@ import com.schoolDays.noche_app.businessLayer.dto.RespuestaDTO;
 import com.schoolDays.noche_app.businessLayer.service.RespuestaService;
 import com.schoolDays.noche_app.businessLayer.service.PreguntaService;
 import com.schoolDays.noche_app.persistenceLayer.dao.RespuestaDAO;
+import com.schoolDays.noche_app.persistenceLayer.entity.PreguntaEntity;
+import com.schoolDays.noche_app.persistenceLayer.entity.RespuestaEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,14 +28,20 @@ public class RespuestaServiceImpl implements RespuestaService {
 
         validateRespuestaData(respuestaDTO);
 
+        // ✅ Obtener el ID de la pregunta correctamente
+        Integer idPregunta = obtenerIdPregunta(respuestaDTO);
+
         // Validar que la pregunta existe
-        preguntaService.getPreguntaById(respuestaDTO.getIdPregunta());
+        preguntaService.getPreguntaById(idPregunta);
 
         // Si no se especifica orden, asignar el siguiente disponible
         if (respuestaDTO.getOrden() == null) {
-            List<RespuestaDTO> existingRespuestas = respuestaDAO.findByPreguntaOrdenadas(respuestaDTO.getIdPregunta());
+            List<RespuestaDTO> existingRespuestas = respuestaDAO.findByPreguntaOrdenadas(idPregunta);
             respuestaDTO.setOrden(existingRespuestas.size() + 1);
         }
+
+        // Guardar con el ID de pregunta correcto
+        respuestaDTO.setIdPregunta(idPregunta);
 
         RespuestaDTO createdRespuesta = respuestaDAO.save(respuestaDTO);
         log.info("Opción de respuesta creada exitosamente con ID: {}", createdRespuesta.getIdRespuesta());
@@ -130,6 +138,35 @@ public class RespuestaServiceImpl implements RespuestaService {
         return respuestaDAO.countCorrectasByPregunta(idPregunta);
     }
 
+    private Integer obtenerIdPregunta(RespuestaDTO dto) {
+        // ✅ Si viene directamente en el DTO
+        if (dto.getIdPregunta() != null) {
+            return dto.getIdPregunta();
+        }
+
+        // ✅ Si viene anidado como objeto (lo dejamos como antes, pero sin romper)
+        try {
+            // Intentar acceder a un posible campo "pregunta" usando reflexión
+            java.lang.reflect.Field preguntaField = dto.getClass().getDeclaredField("pregunta");
+            preguntaField.setAccessible(true);
+            Object preguntaObj = preguntaField.get(dto);
+            if (preguntaObj != null) {
+                java.lang.reflect.Method getIdPreguntaMethod = preguntaObj.getClass().getMethod("getIdPregunta");
+                Object idPregunta = getIdPreguntaMethod.invoke(preguntaObj);
+                if (idPregunta instanceof Integer) {
+                    return (Integer) idPregunta;
+                }
+            }
+        } catch (NoSuchFieldException e) {
+            // El DTO no tiene campo "pregunta", lo ignoramos sin lanzar error
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error al intentar obtener la pregunta anidada: " + e.getMessage());
+        }
+
+        throw new IllegalArgumentException("La pregunta es obligatoria");
+    }
+
+
     private void validateRespuestaData(RespuestaDTO respuestaDTO) {
         if (respuestaDTO.getContenido() == null || respuestaDTO.getContenido().trim().isEmpty()) {
             throw new IllegalArgumentException("El contenido de la respuesta es obligatorio");
@@ -142,6 +179,7 @@ public class RespuestaServiceImpl implements RespuestaService {
         if (respuestaDTO.getIdPregunta() == null) {
             throw new IllegalArgumentException("La pregunta es obligatoria");
         }
+
     }
 
     private void validateRespuestaUpdateData(RespuestaDTO respuestaDTO) {
@@ -153,4 +191,5 @@ public class RespuestaServiceImpl implements RespuestaService {
             throw new IllegalArgumentException("El orden debe ser mayor a 0");
         }
     }
+
 }
