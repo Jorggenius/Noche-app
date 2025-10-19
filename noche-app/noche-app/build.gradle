@@ -2,15 +2,24 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.5'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
+    id 'org.sonarqube' version '4.4.1.3373'
+    id 'io.qameta.allure' version '2.11.2'
 }
 
 group = 'com.schoolDays'
 version = '0.0.1-SNAPSHOT'
-description = 'Proyecto to apps empresariales'
+description = 'Sistema de Capacitación Empresarial - Noche App'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
     }
 }
 
@@ -19,53 +28,171 @@ repositories {
 }
 
 dependencies {
-    // Spring Boot Core
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    // OpenAPI / Swagger - VERSIÓN CORREGIDA
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
-
-
-    // Base de datos - SOLO UNA DEPENDENCIA
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
 
-    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // MapStruct
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-
-    // IMPORTANTE: Binding para Lombok + MapStruct
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
-    // JWT (agregar cuando necesites autenticación)
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
-    // Tests
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // Mockito (incluido en spring-boot-starter-test)
-    testImplementation 'org.mockito:mockito-core'
-    testImplementation 'org.mockito:mockito-junit-jupiter'
-
-    // AssertJ para assertions fluidas
+    testImplementation 'org.mockito:mockito-core:5.11.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
     testImplementation 'org.assertj:assertj-core'
+    testImplementation 'io.qameta.allure:allure-junit5:2.24.0'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
 }
 
-// CONFIGURACIÓN IMPORTANTE PARA MAPSTRUCT + LOMBOK
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/config/**',
+                    '**/dto/**',
+                    '**/entity/**',
+                    '**/*Application.class',
+                    '**/mapper/**/*Impl.class'
+            ])
+        }))
+    }
+    finalizedBy jacocoTestCoverageVerification
+}
+
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.25
+            }
+        }
+        rule {
+            element = 'CLASS'
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.00
+            }
+            excludes = [
+                    '*.config.*',
+                    '*.dto.*',
+                    '*.entity.*',
+                    '*Application',
+                    '*.mapper.*',
+                    '*.dao.*',
+                    '*.controller.*'
+            ]
+        }
+    }
+}
+
+allure {
+    version = '2.24.0'
+    autoconfigure = true
+    aspectjweaver = true
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "noche-app-schooldays"
+        property "sonar.projectName", "Noche App - Sistema de Capacitacion"
+        property "sonar.projectVersion", version
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.token", "sqa_027685b776af0d31c6f858e25b3411e9f7a4ff4e"
+        property "sonar.sources", "src/main/java"
+        property "sonar.tests", "src/test/java"
+        property "sonar.java.binaries", "build/classes/java/main"
+        property "sonar.java.test.binaries", "build/classes/java/test"
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+        property "sonar.exclusions", "**/config/**, **/dto/**, **/entity/**, **/*Application.java"
+        property "sonar.test.exclusions", "src/test/**"
+        property "sonar.java.source", "21"
+        property "sonar.java.target", "21"
+        property "sonar.gradle.skipCompile", "true"
+    }
+}
+
 tasks.withType(JavaCompile) {
     options.annotationProcessorPath = configurations.annotationProcessor
+}
+
+tasks.register('openJacocoReport') {
+    group = 'verification'
+    description = 'Abre el reporte de cobertura JaCoCo en el navegador'
+    dependsOn jacocoTestReport
+    doLast {
+        def reportFile = file("build/reports/jacoco/test/html/index.html")
+        if (reportFile.exists()) {
+            java.awt.Desktop.desktop.browse(reportFile.toURI())
+            println "Reporte de JaCoCo abierto en el navegador"
+        } else {
+            println "No se encontró el reporte de JaCoCo"
+        }
+    }
+}
+
+tasks.register('openAllureReport') {
+    group = 'verification'
+    description = 'Abre el reporte de Allure en el navegador'
+    dependsOn allureReport
+    doLast {
+        def reportFile = file("build/reports/allure-report/allureReport/index.html")
+        if (reportFile.exists()) {
+            java.awt.Desktop.desktop.browse(reportFile.toURI())
+            println "Reporte de Allure abierto en el navegador"
+        } else {
+            println "No se encontró el reporte de Allure"
+        }
+    }
+}
+
+tasks.register('qualityCheck') {
+    group = 'verification'
+    description = 'Ejecuta todas las verificaciones de calidad'
+    dependsOn test, jacocoTestReport, jacocoTestCoverageVerification
+    doLast {
+        println """
+        VERIFICACION DE CALIDAD COMPLETADA
+        
+        Reportes generados:
+        - JaCoCo: build/reports/jacoco/test/html/index.html
+        - Allure: build/reports/allure-report/allureReport/index.html
+        
+        Proximos pasos:
+        1. Revisar cobertura de codigo: ./gradlew openJacocoReport
+        2. Ver reportes de tests: ./gradlew allureReport openAllureReport
+        3. Ejecutar analisis SonarQube: ./gradlew sonar
+        """
+    }
 }
