@@ -46,11 +46,27 @@ public class CursoController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Datos inválidos o usuario sin permisos"
+                    description = "Datos inválidos o usuario sin permisos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseData.class)
+                    )
             ),
             @ApiResponse(
                     responseCode = "403",
-                    description = "Usuario sin permisos para crear cursos"
+                    description = "Usuario sin permisos para crear cursos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseData.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "id no existe",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseData.class)
+                    )
             )
     })
     public ResponseEntity<?> createCurso(
@@ -74,6 +90,20 @@ public class CursoController {
             summary = "Buscar curso por ID",
             description = "Obtiene información completa de un curso específico"
     )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Curso encontrado exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CursoDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Curso no encontrado"
+            )
+    })
     public ResponseEntity<CursoDTO> getCursoById(
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer id
@@ -94,11 +124,30 @@ public class CursoController {
             summary = "Listar todos los cursos",
             description = "Obtiene lista completa de cursos disponibles"
     )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de cursos obtenida exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CursoDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "No se encontraron cursos"
+            )
+    })
     public ResponseEntity<List<CursoDTO>> getAllCursos() {
         log.debug("GET /v1/cursos - Obteniendo todos los cursos");
 
         List<CursoDTO> cursos = cursoService.getAllCursos();
         log.debug("Se encontraron {} cursos", cursos.size());
+
+        if (cursos.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
         return ResponseEntity.ok(cursos);
     }
 
@@ -107,6 +156,28 @@ public class CursoController {
             summary = "Actualizar curso",
             description = "Actualiza información de un curso. Solo el creador o admin pueden modificar."
     )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Curso actualizado exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CursoDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Curso no encontrado"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Datos inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseData.class)
+                    )
+            )
+    })
     public ResponseEntity<CursoDTO> updateCurso(
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer id,
@@ -132,7 +203,19 @@ public class CursoController {
             summary = "Eliminar curso",
             description = "Elimina un curso. No se puede eliminar si tiene inscripciones activas."
     )
-    public ResponseEntity<?> deleteCurso(
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Curso eliminado exitosamente"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Curso no encontrado"
+            ),
+
+
+    })
+    public ResponseEntity<Void> deleteCurso(
             @Parameter(description = "ID del curso", required = true, example = "1")
             @PathVariable Integer id
     ) {
@@ -141,22 +224,36 @@ public class CursoController {
         try {
             cursoService.deleteCurso(id);
             log.info("Curso eliminado exitosamente ID: {}", id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             if (e.getMessage().contains("no encontrado")) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+                return ResponseEntity.notFound().build();
             } else if (e.getMessage().contains("inscripciones")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
             }
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-        @GetMapping("/instructor/{instructorId}")
+    @GetMapping("/instructor/{instructorId}")
     @Operation(
             summary = "Cursos por instructor",
             description = "Obtiene todos los cursos creados por un instructor"
     )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de cursos del instructor obtenida exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CursoDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "No se encontraron cursos para el instructor especificado"
+            )
+    })
     public ResponseEntity<List<CursoDTO>> getCursosByCreador(
             @Parameter(description = "ID del instructor", required = true, example = "1")
             @PathVariable Integer instructorId
@@ -165,6 +262,11 @@ public class CursoController {
 
         try {
             List<CursoDTO> cursos = cursoService.getCursosByCreador(instructorId);
+
+            if (cursos.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
             return ResponseEntity.ok(cursos);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -176,6 +278,28 @@ public class CursoController {
             summary = "Cursos por nivel",
             description = "Obtiene cursos filtrados por nivel de dificultad"
     )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de cursos del nivel obtenida exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CursoDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "No se encontraron cursos para el nivel especificado"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Nivel inválido",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseData.class)
+                    )
+            )
+    })
     public ResponseEntity<?> getCursosByNivel(
             @Parameter(description = "Nivel del curso", required = true, example = "BASICO")
             @PathVariable String nivel
@@ -185,6 +309,11 @@ public class CursoController {
         try {
             CursoEntity.Nivel nivelEnum = CursoEntity.Nivel.valueOf(nivel.toUpperCase());
             List<CursoDTO> cursos = cursoService.getCursosByNivel(nivelEnum);
+
+            if (cursos.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
             return ResponseEntity.ok(cursos);
         } catch (IllegalArgumentException e) {
             return createErrorResponse(HttpStatus.BAD_REQUEST, "Nivel inválido: " + nivel);
@@ -196,6 +325,28 @@ public class CursoController {
             summary = "Buscar cursos por título",
             description = "Busca cursos que contengan el texto en el título"
     )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Búsqueda completada exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CursoDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "No se encontraron cursos con el título especificado"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Parámetro de búsqueda inválido",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseData.class)
+                    )
+            )
+    })
     public ResponseEntity<?> searchCursosByTitulo(
             @Parameter(description = "Texto a buscar", required = true, example = "Java")
             @RequestParam String titulo
@@ -204,6 +355,11 @@ public class CursoController {
 
         try {
             List<CursoDTO> cursos = cursoService.searchCursosByTitulo(titulo);
+
+            if (cursos.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
             return ResponseEntity.ok(cursos);
         } catch (IllegalArgumentException e) {
             return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -215,10 +371,29 @@ public class CursoController {
             summary = "Cursos más populares",
             description = "Obtiene cursos ordenados por número de inscripciones"
     )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de cursos populares obtenida exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CursoDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "No se encontraron cursos"
+            )
+    })
     public ResponseEntity<List<CursoDTO>> getCursosMasPopulares() {
         log.debug("GET /v1/cursos/populares - Cursos más populares");
 
         List<CursoDTO> cursos = cursoService.getCursosMasPopulares();
+
+        if (cursos.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
         return ResponseEntity.ok(cursos);
     }
 
@@ -227,10 +402,29 @@ public class CursoController {
             summary = "Cursos más recientes",
             description = "Obtiene cursos ordenados por fecha de creación descendente"
     )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de cursos recientes obtenida exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CursoDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "No se encontraron cursos"
+            )
+    })
     public ResponseEntity<List<CursoDTO>> getCursosMasRecientes() {
         log.debug("GET /v1/cursos/recientes - Cursos más recientes");
 
         List<CursoDTO> cursos = cursoService.getCursosMasRecientes();
+
+        if (cursos.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
         return ResponseEntity.ok(cursos);
     }
 
